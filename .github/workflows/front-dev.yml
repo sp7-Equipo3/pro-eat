@@ -1,0 +1,40 @@
+name: Deploy to Vercel Dev
+
+on:
+  push:
+    branches:
+      - front-dev
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: deploy-front-vercel
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      
+      - name: Install Dependencies
+        run: npm install
+        working-directory: frontend
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Link
+        run: vercel link --yes --project ${{ vars.VERCEL_PROJECT_DEV }} --token ${{ secrets.VERCEL_TOKEN }}
+        working-directory: frontend
+      
+      - name: Pull Vercel Environment Variables
+        run: vercel pull --yes --token ${{ secrets.VERCEL_TOKEN }}
+        working-directory: frontend
+      
+      - name: Deploy to Vercel
+        run: vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+        working-directory: frontend
