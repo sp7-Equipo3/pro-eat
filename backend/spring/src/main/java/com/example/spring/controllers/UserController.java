@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Usuarios", description = "Operaciones relacionadas con los usuarios")
 public class UserController {
 
-    @GetMapping("/hola")
-    public String TestController(){
+    @GetMapping("hola")
+    public String testController() {
         return "Hola Mundo";
     }
 }
