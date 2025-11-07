@@ -7,10 +7,7 @@ function App() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-100">
-        <Products />
-      </div>
-    <RouterProvider router={router} />;
+      <RouterProvider router={router} />;
     </>
   )}
 

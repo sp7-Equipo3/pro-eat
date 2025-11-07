@@ -1,4 +1,6 @@
+import { Products } from "@/assets/pages/Products";
 import HomePage from "../pages/HomePage";
+import { authRoutes } from "@/features/auth/routes/auth.routes";
 //import { MainLayout } from "@/shared/components/layout/MainLayout.jsx";
 
 export const homeRoutes = [
@@ -6,16 +8,15 @@ export const homeRoutes = [
     path: "/",
     element: (
       //<MainLayout>
-        <HomePage />
+      <HomePage />
       //</MainLayout>
     ),
-  },
-  {
-    path: "/home",
-    element: (
-      //<MainLayout>
-        <HomePage />
-      //</MainLayout>
-    ),
+    children: [
+      {
+        path: "/products",
+        element: <Products />,
+      },
+      ...authRoutes
+    ],
   },
 ];
