@@ -1,4 +1,4 @@
-package com.example.spring.dtos;
+package com.example.spring.dtos.Request;
 
 import org.springframework.stereotype.Indexed;
 
