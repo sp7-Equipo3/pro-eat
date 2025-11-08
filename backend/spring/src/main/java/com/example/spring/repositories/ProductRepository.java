@@ -2,9 +2,9 @@ package com.example.spring.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.spring.entity.ProductEntity;
+import com.example.spring.models.Product;
+import org.springframework.stereotype.Repository;
 
-public interface ProductRepository extends JpaRepository<ProductEntity,Long> {
-    
-    
+@Repository
+public interface ProductRepository extends JpaRepository<Product,Long> {
 }

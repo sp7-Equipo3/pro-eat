@@ -5,6 +5,7 @@ import com.example.spring.dtos.auth.LoginResponseDto;
 import com.example.spring.dtos.auth.RegisterRequestDto;
 import com.example.spring.dtos.auth.RegisterResponseDto;
 import com.example.spring.services.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "01 - Autenticación",
+        description = "Endpoints para autenticación de usuarios y gestión de cuentas")
 public class AuthController {
     private final AuthService authService;
 

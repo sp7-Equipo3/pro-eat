@@ -1,21 +1,22 @@
-package com.example.spring.entity;
+package com.example.spring.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class ProductEntity {
+@NoArgsConstructor
+@Getter
+@Setter
+@Entity
+@Table(name = "product")
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+    @Column(nullable = false)
     private String name;
     private String description;
-    private double price;
+    private Double price;
     private String category;
     private Integer calories;
-    private boolean available = true;
+    private boolean status = true;
 }
