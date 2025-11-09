@@ -1,4 +1,4 @@
-import { getAuthToken } from '@/infrastructure/constants/env.js';
+import { getAuthToken } from '@/features/auth/utils/authStorage.js';
 import { AuthRedirect } from '@/infrastructure/router/AuthRedirect.jsx';
 import NotFound from './NotFoundPage.jsx';
 

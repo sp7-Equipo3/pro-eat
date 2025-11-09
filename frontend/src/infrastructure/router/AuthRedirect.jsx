@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { getAuthToken } from '../constants/env.js';
+import { getAuthToken } from '@/features/auth/utils/authStorage.js';
 
 export const AuthRedirect = () => {
   const token = getAuthToken();

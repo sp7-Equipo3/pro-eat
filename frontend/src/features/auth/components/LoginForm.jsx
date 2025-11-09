@@ -12,7 +12,7 @@ import {
 } from "@/shared/components/ui/form";
 import { Button } from "@/shared/components/ui/button";
 import { useLogin } from "../hooks/useAuth.js";
-import { setAuthToken, clearAuthData } from "@/infrastructure/constants/env.js";
+import { setAuthToken, clearAuthData } from "../utils/authStorage.js";
 
 const FormSchema = {
   username: "",

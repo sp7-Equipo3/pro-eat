@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from "react-router";
 import { useLogout } from "@/features/auth/hooks/useAuth.js";
-import { clearAuthData } from "@/infrastructure/constants/env.js";
+import { clearAuthData } from "@/features/auth/utils/authStorage.js";
 import { Button } from "@/shared/components/ui/button";
 
 const DashboardPage = () => {
