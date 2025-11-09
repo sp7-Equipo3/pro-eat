@@ -2,6 +2,7 @@ package com.example.spring.services.impl;
 
 import com.example.spring.dtos.product.ProductRequestDto;
 import com.example.spring.dtos.product.ProductResponseDto;
+import com.example.spring.exceptions.custom.ResourceNotFoundException;
 import com.example.spring.mappers.ProductMapper;
 import com.example.spring.models.Product;
 import com.example.spring.repositories.ProductRepository;
@@ -9,9 +10,7 @@ import com.example.spring.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -29,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDto getProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto", "id", id));
         return mapper.toResponseDto(product);
     }
 
@@ -42,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProductById(Long id) {
         if (!productRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Producto", "id", id);
         }
         productRepository.deleteById(id);
     }
@@ -50,7 +49,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDto editProduct(Long id, ProductRequestDto dto) {
         Product auxProduct = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto", "id", id));
 
         if (dto.getName() != null)            auxProduct.setName(dto.getName());
         if (dto.getDescription() != null)   auxProduct.setDescription(dto.getDescription());

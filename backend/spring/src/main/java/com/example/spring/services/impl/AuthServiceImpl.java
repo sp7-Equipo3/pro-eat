@@ -4,6 +4,8 @@ import com.example.spring.dtos.auth.LoginRequestDto;
 import com.example.spring.dtos.auth.LoginResponseDto;
 import com.example.spring.dtos.auth.RegisterRequestDto;
 import com.example.spring.dtos.auth.RegisterResponseDto;
+import com.example.spring.exceptions.custom.DuplicateResourceException;
+import com.example.spring.exceptions.custom.DuplicateResourceException;
 import com.example.spring.mappers.UserMapper;
 import com.example.spring.models.User;
 import com.example.spring.repositories.UserRepository;
@@ -45,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto requestDto) {
         if (userRepository.existsByUsername(requestDto.username())) {
-            throw new IllegalArgumentException("Username already taken");
+            throw new DuplicateResourceException("Usuario", "username", requestDto.username());
         }
         String encodedPassword = passwordEncoder.encode(requestDto.password());
 
