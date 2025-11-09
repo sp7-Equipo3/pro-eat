@@ -9,9 +9,10 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
 } from "@/shared/components/ui/form";
 import { Button } from "@/shared/components/ui/button";
+import { useLogin } from "../hooks/useAuth.js";
+import { setAuthToken, clearAuthData } from "@/infrastructure/constants/env.js";
 
 const FormSchema = {
   username: "",
@@ -26,17 +27,34 @@ export function LoginForm() {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/dashboard";
 
+  const login = useLogin({
+    onSuccess: (data) => {
+      console.log("Login success - Data recibida:", data);
+      if (data && data.token) {
+        console.log("Token encontrado, guardando...");
+        setAuthToken(data.token);
+        console.log("Token guardado, navegando a:", from);
+        navigate(from, { replace: true });
+      } else {
+        console.warn("No se recibió token en la respuesta:", data);
+        clearAuthData();
+        form.setError("root", {
+          message: "No se recibió token de autenticación. Por favor, intenta de nuevo.",
+        });
+      }
+    },
+    onError: (error) => {
+      console.error("Error al iniciar sesión:", error);
+      clearAuthData();
+      form.setError("root", {
+        message: error?.message || "Error al iniciar sesión. Por favor, intenta de nuevo.",
+      });
+    },
+  });
+
   function onSubmit(data) {
-    console.log("Datos enviados:", data);
-    // TODO: Aquí irá la lógica de autenticación con el backend
-    // Por ahora simulamos el login exitoso
-    // Cuando el backend esté listo, aquí irá:
-    // - Llamada a la API de login
-    // - Guardar token con setAuthToken(response.data.token)
-    // - Redirigir a la página desde la cual intentó acceder o dashboard
-    
-    // Simulación temporal - redirigir después de login exitoso
-    navigate(from, { replace: true });
+    console.log('LoginForm - onSubmit llamado con:', data);
+    login.mutate(data);
   }
 
   return (
@@ -91,11 +109,17 @@ export function LoginForm() {
               </FormItem>
             )}
           />
+          {form.formState.errors.root && (
+            <div className="text-red-500 text-sm text-center">
+              {form.formState.errors.root.message}
+            </div>
+          )}
           <Button
             className="w-full text-sm font-semibold bg-orange-600 hover:bg-yellow-900 text-white"
             type="submit"
+            disabled={login.isPending}
           >
-            Iniciar Sesión
+            {login.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
           </Button>
           <div className="text-center text-sm">
             <span className="text-gray-600">¿No tienes una cuenta? </span>

@@ -9,9 +9,10 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
 } from "@/shared/components/ui/form";
 import { Button } from "@/shared/components/ui/button";
+import { useRegister } from "../hooks/useAuth.js";
+import { setAuthToken, clearAuthData } from "@/infrastructure/constants/env.js";
 
 const FormSchema = {
   email: "",
@@ -25,17 +26,27 @@ export function RegisterForm() {
   });
   const navigate = useNavigate();
 
+  const register = useRegister({
+    onSuccess: (data) => {
+      if (data.token) {
+        setAuthToken(data.token);
+        navigate("/dashboard", { replace: true });
+      } else {
+        clearAuthData();
+        navigate("/login", { replace: true });
+      }
+    },
+    onError: (error) => {
+      console.error("Error al registrarse:", error.message);
+      clearAuthData();
+      form.setError("root", {
+        message: error.message || "Error al registrarse. Por favor, intenta de nuevo.",
+      });
+    },
+  });
+
   function onSubmit(data) {
-    console.log("Datos enviados:", data);
-    // TODO: Aquí irá la lógica de registro con el backend
-    // Por ahora simulamos el registro exitoso
-    // Cuando el backend esté listo, aquí irá:
-    // - Llamada a la API de registro
-    // - Guardar token
-    // - Redirigir a dashboard o login
-    
-    // Simulación temporal - redirigir al login después de registro exitoso
-    navigate("/login");
+    register.mutate(data);
   }
 
   return (
@@ -47,7 +58,7 @@ export function RegisterForm() {
         >
           <FormField
             control={form.control}
-            name="Email"
+            name="email"
             rules={{
               required: "El correo electronico es obligatorio",
               pattern: {
@@ -121,11 +132,17 @@ export function RegisterForm() {
               </FormItem>
             )}
           />
+          {form.formState.errors.root && (
+            <div className="text-red-500 text-sm text-center">
+              {form.formState.errors.root.message}
+            </div>
+          )}
           <Button
             className="w-full text-sm font-semibold bg-orange-600 hover:bg-yellow-900 text-white"
             type="submit"
+            disabled={register.isPending}
           >
-            Registrarse
+            {register.isPending ? "Registrando..." : "Registrarse"}
           </Button>
           <div className="text-center text-sm">
             <span className="text-gray-600">¿Ya tienes una cuenta? </span>
