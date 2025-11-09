@@ -1,16 +1,13 @@
 import LoginPage from "../pages/LoginPage.jsx";
 import RegisterPage from "../pages/RegisterPage.jsx";
 import { PublicRoute } from "@/infrastructure/router/PublicRoute.jsx";
-//import AuthLayout from "@/shared/components/layout/AuthLayout.jsx";
 
 export const authRoutes = [
   {
     path: "/",
     element: (
       <PublicRoute>
-        {/*<AuthLayout>*/}
-          <LoginPage />
-        {/*</AuthLayout>*/}
+        <LoginPage />
       </PublicRoute>
     ),
   },
@@ -18,9 +15,7 @@ export const authRoutes = [
     path: "/login",
     element: (
       <PublicRoute>
-        {/*<AuthLayout>*/}
-          <LoginPage />
-        {/*</AuthLayout>*/}
+        <LoginPage />
       </PublicRoute>
     ),
   },
@@ -28,9 +23,7 @@ export const authRoutes = [
     path: "/register",
     element: (
       <PublicRoute>
-        {/*<AuthLayout>*/}
-          <RegisterPage />
-        {/*</AuthLayout>*/}
+        <RegisterPage />
       </PublicRoute>
     ),
   },
