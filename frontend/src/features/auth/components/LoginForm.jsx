@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, Link, useLocation } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import {
   Form,
   FormField,
@@ -13,15 +16,17 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { useLogin } from "../hooks/useAuth.js";
 import { setAuthToken, clearAuthData } from "../utils/authStorage.js";
-
-const FormSchema = {
-  username: "",
-  password: "",
-};
+import { loginSchema } from "../validators/authValidators.js";
 
 export function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false);
+  
   const form = useForm({
-    defaultValues: FormSchema,
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
   });
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,9 +72,6 @@ export function LoginForm() {
           <FormField
             control={form.control}
             name="username"
-            rules={{
-              required: "El campo esta vacio",
-            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-semibold text-orange-600">
@@ -89,21 +91,32 @@ export function LoginForm() {
           <FormField
             control={form.control}
             name="password"
-            rules={{
-              required: "El campo esta vacio",
-            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-semibold text-orange-600">
                   Password
                 </FormLabel>
                 <FormControl>
-                  <input
-                    type="password"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-600"
-                    placeholder="Password"
-                    {...field}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-600"
+                      placeholder="Password"
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                      aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
