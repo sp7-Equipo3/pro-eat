@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Form,
   FormField,
@@ -22,9 +23,19 @@ export function RegisterForm() {
   const form = useForm({
     defaultValues: FormSchema,
   });
+  const navigate = useNavigate();
 
   function onSubmit(data) {
     console.log("Datos enviados:", data);
+    // TODO: Aquí irá la lógica de registro con el backend
+    // Por ahora simulamos el registro exitoso
+    // Cuando el backend esté listo, aquí irá:
+    // - Llamada a la API de registro
+    // - Guardar token
+    // - Redirigir a dashboard o login
+    
+    // Simulación temporal - redirigir al login después de registro exitoso
+    navigate("/login");
   }
 
   return (
@@ -51,6 +62,7 @@ export function RegisterForm() {
                 </FormLabel>
                 <FormControl>
                   <input
+                    type="email"
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-600"
                     placeholder="Email"
                     {...field}
@@ -63,6 +75,9 @@ export function RegisterForm() {
           <FormField
             control={form.control}
             name="username"
+            rules={{
+              required: "El username es obligatorio",
+            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-semibold text-orange-600">
@@ -96,6 +111,7 @@ export function RegisterForm() {
                 </FormLabel>
                 <FormControl>
                   <input
+                    type="password"
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-600"
                     placeholder="Password"
                     {...field}
@@ -106,11 +122,20 @@ export function RegisterForm() {
             )}
           />
           <Button
-            className="text-sm font-semibold bg-orange-600 hover:bg-yellow-900 text-white"
+            className="w-full text-sm font-semibold bg-orange-600 hover:bg-yellow-900 text-white"
             type="submit"
           >
-            Enviar
+            Registrarse
           </Button>
+          <div className="text-center text-sm">
+            <span className="text-gray-600">¿Ya tienes una cuenta? </span>
+            <Link
+              to="/login"
+              className="text-orange-600 hover:text-orange-700 font-semibold"
+            >
+              Inicia sesión aquí
+            </Link>
+          </div>
         </form>
       </Form>
     </div>
