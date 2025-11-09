@@ -5,7 +5,6 @@ import com.example.spring.dtos.auth.LoginResponseDto;
 import com.example.spring.dtos.auth.RegisterRequestDto;
 import com.example.spring.dtos.auth.RegisterResponseDto;
 import com.example.spring.exceptions.custom.DuplicateResourceException;
-import com.example.spring.exceptions.custom.DuplicateResourceException;
 import com.example.spring.mappers.UserMapper;
 import com.example.spring.models.User;
 import com.example.spring.repositories.UserRepository;
@@ -86,13 +85,13 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Gets the currently authenticated user.
      */
-    public Optional<User> getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return Optional.empty();
-        }
-        String username = authentication.getName();
-        return userRepository.findByUsername(username);
-    }
+//    public Optional<User> getAuthenticatedUser() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            return Optional.empty();
+//        }
+//        String username = authentication.getName();
+//        return userRepository.findByUsername(username);
+//    }
 
 }
