@@ -43,7 +43,7 @@ public class ProductController {
     @CreateProductEndpointDoc
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResult<?>> createProduct(@RequestBody ProductRequestDto requestDto) {
+    public ResponseEntity<ApiResult<?>> createProduct(@RequestBody @Valid ProductRequestDto requestDto) {
         ProductResponseDto createdProduct = productService.createProduct(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResult.success(createdProduct,
                 "Producto creada correctamente."));

@@ -59,10 +59,14 @@ import java.lang.annotation.*;
                         examples = @ExampleObject(value = """
                 {
                   "success": false,
-                  "message": "Error de validación: {name=no puede estar vacío, price=debe ser mayor que 0}",
+                  "message": "Error de validación en los siguientes campos: name, price",
                   "error": "VALIDATION_ERROR",
                   "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/products"
+                  "path": "/api/products",
+                  "details": {
+                    "name": "el nombre del producto es obligatorio",
+                    "price": "el precio es obligatorio"
+                  }
                 }
             """)
                 )

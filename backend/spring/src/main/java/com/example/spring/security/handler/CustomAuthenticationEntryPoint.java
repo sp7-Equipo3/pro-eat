@@ -44,7 +44,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                 "Acceso denegado. Debes iniciar sesión para acceder a este recurso.",
                 "AUTHENTICATION_REQUIRED",
                 LocalDateTime.now(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null  // Sin details para errores de seguridad
         );
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

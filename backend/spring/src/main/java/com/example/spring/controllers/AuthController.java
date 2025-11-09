@@ -63,10 +63,14 @@ public class AuthController {
                             examples = @ExampleObject(value = """
                 {
                   "success": false,
-                  "message": "Error de validación: {username=no puede estar vacío, password=debe tener al menos 6 caracteres}",
+                  "message": "Error de validación en los siguientes campos: username, password",
                   "error": "VALIDATION_ERROR",
                   "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/register"
+                  "path": "/api/auth/register",
+                  "details": {
+                    "username": "el nombre de usuario debe tener entre 3 y 20 caracteres",
+                    "password": "la contraseña es obligatoria"
+                  }
                 }
             """)
                     )
@@ -143,10 +147,13 @@ public class AuthController {
                             examples = @ExampleObject(value = """
                 {
                   "success": false,
-                  "message": "Error de validación: {username=no puede estar vacío}",
+                  "message": "Error de validación en los siguientes campos: username",
                   "error": "VALIDATION_ERROR",
                   "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/login"
+                  "path": "/api/auth/login",
+                  "details": {
+                    "username": "el nombre de usuario es obligatorio"
+                  }
                 }
             """)
                     )
