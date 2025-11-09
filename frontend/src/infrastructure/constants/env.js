@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'https://api.example.com';
+  import.meta.env.VITE_API_BASE_URL || 'https://pro-eat.onrender.com';
 
 export const API_TIMEOUT = 30000;
 
@@ -19,3 +19,4 @@ export const setAuthToken = token => {
     localStorage.removeItem('token');
   }
 };
+

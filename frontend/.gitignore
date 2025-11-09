@@ -25,3 +25,6 @@ dist-ssr
  
 # Ignore accidental Windows reserved filename in frontend root
 /nul
+
+# Environment variables
+.env

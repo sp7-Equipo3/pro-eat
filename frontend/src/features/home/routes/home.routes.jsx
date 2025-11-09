@@ -1,4 +1,3 @@
-import { Products } from "@/assets/pages/Products";
 import HomePage from "../pages/HomePage";
 import { authRoutes } from "@/features/auth/routes/auth.routes";
 //import { MainLayout } from "@/shared/components/layout/MainLayout.jsx";
@@ -12,10 +11,6 @@ export const homeRoutes = [
       //</MainLayout>
     ),
     children: [
-      {
-        path: "/products",
-        element: <Products />,
-      },
       ...authRoutes
     ],
   },
