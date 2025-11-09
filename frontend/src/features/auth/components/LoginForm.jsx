@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, UtensilsCrossed } from "lucide-react";
 import {
   Form,
   FormField,
@@ -63,12 +63,22 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex justify-center p-8">
+    <div className="min-h-screen flex items-center justify-center p-8">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="p-6 border rounded-lg shadow-lg w-full max-w-sm space-y-8"
+          className="p-6 border rounded-lg shadow-lg w-full max-w-sm space-y-6"
         >
+          <div className="flex flex-col items-center gap-3 mb-4">
+            <div className="flex items-center gap-2 text-orange-600">
+              <UtensilsCrossed className="h-8 w-8" />
+              <span className="text-2xl font-bold">ProEat</span>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">Iniciar Sesión</h1>
+            <p className="text-sm text-gray-600 text-center">
+              Ingresa tus credenciales para acceder
+            </p>
+          </div>
           <FormField
             control={form.control}
             name="username"

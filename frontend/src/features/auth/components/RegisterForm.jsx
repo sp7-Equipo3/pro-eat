@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, UtensilsCrossed } from "lucide-react";
+import { toast } from "sonner";
 import {
   Form,
   FormField,
@@ -34,15 +35,24 @@ export function RegisterForm() {
     onSuccess: (data) => {
       if (data.token) {
         setAuthToken(data.token);
+        toast.success("¡Registro exitoso!", {
+          description: "Tu cuenta ha sido creada correctamente.",
+        });
         navigate("/dashboard", { replace: true });
       } else {
         clearAuthData();
+        toast.info("Registro completado", {
+          description: "Por favor, inicia sesión para continuar.",
+        });
         navigate("/login", { replace: true });
       }
     },
     onError: (error) => {
       console.error("Error al registrarse:", error.message);
       clearAuthData();
+      toast.error("Error al registrarse", {
+        description: error.message || "Por favor, intenta de nuevo.",
+      });
       form.setError("root", {
         message: error.message || "Error al registrarse. Por favor, intenta de nuevo.",
       });
@@ -54,12 +64,22 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="flex justify-center p-8">
+    <div className="min-h-screen flex items-center justify-center p-8">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="p-6 border rounded-lg shadow-lg w-full max-w-sm space-y-8"
+          className="p-6 border rounded-lg shadow-lg w-full max-w-sm space-y-6"
         >
+          <div className="flex flex-col items-center gap-3 mb-4">
+            <div className="flex items-center gap-2 text-orange-600">
+              <UtensilsCrossed className="h-8 w-8" />
+              <span className="text-2xl font-bold">ProEat</span>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">Crear Cuenta</h1>
+            <p className="text-sm text-gray-600 text-center">
+              Regístrate para comenzar a usar ProEat
+            </p>
+          </div>
           <FormField
             control={form.control}
             name="username"
