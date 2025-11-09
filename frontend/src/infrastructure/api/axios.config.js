@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS, getAuthToken } from '../constants/env.js'
+import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS } from '../constants/config.js'
+import { getAuthToken } from '@/features/auth/utils/authStorage.js'
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -21,4 +22,5 @@ axiosInstance.interceptors.request.use(
 )
 
 export default axiosInstance
+
 

@@ -17,19 +17,23 @@ export const useApiQuery = (queryKey, url, options = {}) => {
 export const useApiMutation = (mutationFn, options = {}) => {
   const queryClient = useQueryClient()
 
+  const { onSuccess, onError, ...restOptions } = options
+
   return useMutation({
     mutationFn,
     onSuccess: (data, variables, context) => {
-      if (options.onSuccess) {
-        options.onSuccess(data, variables, context)
+      console.log('useApiMutation - onSuccess ejecutado:', { data, variables, context })
+      if (onSuccess) {
+        onSuccess(data, variables, context)
       }
     },
     onError: (error, variables, context) => {
-      if (options.onError) {
-        options.onError(error, variables, context)
+      console.error('useApiMutation - onError ejecutado:', { error, variables, context })
+      if (onError) {
+        onError(error, variables, context)
       }
     },
-    ...options,
+    ...restOptions,
   })
 }
 
@@ -72,4 +76,5 @@ export const useApiDelete = (url, options = {}) => {
     options
   )
 }
+
 
