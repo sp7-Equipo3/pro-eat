@@ -13,7 +13,7 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    @Value("${web.cors.allowed-origins}")
+    @Value("${web.cors.allowed-origins,https://pro-eat.vercel.app}")
     private String corsAllowedOrigins;
 
     @Bean
