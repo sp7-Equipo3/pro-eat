@@ -1,8 +1,14 @@
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { SearchBar } from './filters/SearchBar';
 import { SortSelector } from './filters/SortSelector';
 import { CategoryFilter } from './filters/CategoryFilter';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle
+} from '@/shared/components/ui/sheet';
 
 export function ProductsFiltersSidebar({
   isOpen,
@@ -12,56 +18,79 @@ export function ProductsFiltersSidebar({
   sort,
   onSortChange,
   selectedCategories,
-  onCategoriesChange
+  onCategoriesChange,
+  isCollapsed,
+  onToggleCollapse
 }) {
+  const sidebarContent = (
+    <div className='p-6 space-y-6'>
+      <div>
+        <h3 className='text-lg font-semibold mb-4'>Buscar</h3>
+        <SearchBar value={searchQuery} onChange={onSearchChange} />
+      </div>
+
+      <SortSelector value={sort} onChange={onSortChange} />
+
+      <CategoryFilter
+        selectedCategories={selectedCategories}
+        onChange={onCategoriesChange}
+      />
+    </div>
+  );
+
   return (
     <>
-      <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity lg:hidden ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={onClose}
-      />
-      <aside
-        className={`fixed left-0 top-0 h-full w-80 bg-white shadow-xl z-50 overflow-y-auto transition-transform lg:relative lg:z-auto lg:shadow-none lg:translate-x-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className='sticky top-0 bg-white border-b p-4 flex items-center justify-between lg:hidden'>
-          <h2 className='text-lg font-semibold'>Filtros</h2>
-          <button
-            onClick={onClose}
-            className='text-gray-500 hover:text-gray-700'
-            aria-label='Cerrar filtros'
-          >
-            <X className='h-6 w-6' />
-          </button>
-        </div>
-
-        <div className='p-6 space-y-6'>
-          <div>
-            <h3 className='text-lg font-semibold mb-4'>Buscar</h3>
-            <SearchBar value={searchQuery} onChange={onSearchChange} />
-          </div>
-
-          <div>
-            <h3 className='text-lg font-semibold mb-4'>Ordenar</h3>
-            <SortSelector value={sort} onChange={onSortChange} />
-          </div>
-
-          <div>
-            <h3 className='text-lg font-semibold mb-4'>Categorías</h3>
-            <CategoryFilter
-              selectedCategories={selectedCategories}
-              onChange={onCategoriesChange}
-            />
-          </div>
-
-          <div className='pt-4 border-t lg:hidden'>
+      <Sheet open={isOpen} onOpenChange={onClose}>
+        <SheetContent
+          side='left'
+          className='w-80 p-0 lg:hidden shadow-[2px_0_12px_rgba(234,88,12,0.15)]'
+        >
+          <SheetHeader className='p-4 border-b'>
+            <SheetTitle>Filtros</SheetTitle>
+          </SheetHeader>
+          {sidebarContent}
+          <div className='pt-4 border-t px-6 pb-6'>
             <Button onClick={onClose} className='w-full' variant='outline'>
               Aplicar Filtros
             </Button>
           </div>
+        </SheetContent>
+      </Sheet>
+
+      <aside
+        className={`hidden lg:block bg-white border-r transition-all duration-300 ${
+          isCollapsed
+            ? 'w-12 shadow-sm'
+            : 'w-80 shadow-[2px_0_12px_rgba(234,88,12,0.15)]'
+        }`}
+      >
+        <div className='sticky top-[73px] h-[calc(100vh-73px)] flex flex-col'>
+          <div
+            className={`border-b ${
+              isCollapsed
+                ? 'flex items-center justify-center p-2'
+                : 'flex items-center justify-between p-4'
+            }`}
+          >
+            {!isCollapsed && <h2 className='text-lg font-semibold'>Filtros</h2>}
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={onToggleCollapse}
+              className={isCollapsed ? '' : 'ml-auto'}
+              aria-label={isCollapsed ? 'Expandir filtros' : 'Colapsar filtros'}
+            >
+              {isCollapsed ? (
+                <ChevronRight className='h-4 w-4' />
+              ) : (
+                <ChevronLeft className='h-4 w-4' />
+              )}
+            </Button>
+          </div>
+
+          {!isCollapsed && (
+            <div className='flex-1 overflow-y-auto'>{sidebarContent}</div>
+          )}
         </div>
       </aside>
     </>

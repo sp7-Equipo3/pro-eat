@@ -37,7 +37,7 @@ export function CreateProductForm({ onClose }) {
     defaultValues: {
       name: '',
       description: '',
-      price: 0,
+      price: undefined,
       category: '',
     },
   });
@@ -121,8 +121,19 @@ export function CreateProductForm({ onClose }) {
                         step="0.01"
                         min="0"
                         placeholder="0.00"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        value={field.value ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '') {
+                            field.onChange(undefined);
+                          } else {
+                            const numValue = parseFloat(value);
+                            if (!isNaN(numValue)) {
+                              field.onChange(numValue);
+                            }
+                          }
+                        }}
+                        onBlur={field.onBlur}
                       />
                     </FormControl>
                     <FormMessage />

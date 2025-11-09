@@ -10,7 +10,8 @@ import { Filter, Plus } from 'lucide-react';
 export default function ProductsListPage() {
   const [page, setPage] = useState(0);
   const [size] = useState(20);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(true);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,12 +36,8 @@ export default function ProductsListPage() {
       params.sort = filters.sort;
     }
 
-    if (filters.selectedCategories.length > 0) {
-      params.category = filters.selectedCategories;
-    }
-
     return params;
-  }, [page, size, filters.sort, filters.selectedCategories]);
+  }, [page, size, filters.sort]);
 
   const queryString = useMemo(() => {
     const queryParamsObj = new URLSearchParams();
@@ -57,7 +54,6 @@ export default function ProductsListPage() {
   const {
     data: paginatedResponse,
     isLoading,
-    isFetching,
     error
   } = useApiQuery(['products', queryParams], queryString, {
     placeholderData: previousData => previousData,
@@ -119,7 +115,7 @@ export default function ProductsListPage() {
 
   useEffect(() => {
     setPage(0);
-  }, [filters.sort, filters.selectedCategories]);
+  }, [filters.sort]);
 
   const handlePageChange = newPage => {
     setPage(newPage);
@@ -155,6 +151,8 @@ export default function ProductsListPage() {
         onSortChange={handleSortChange}
         selectedCategories={filters.selectedCategories}
         onCategoriesChange={handleCategoriesChange}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
       <div className='flex-1'>
@@ -189,11 +187,6 @@ export default function ProductsListPage() {
             </p>
           ) : (
             <>
-              {isFetching && paginatedResponse && (
-                <div className='mb-4 text-center text-sm text-gray-500'>
-                  Actualizando...
-                </div>
-              )}
               {filters.searchQuery && (
                 <div className='mb-4 text-sm text-gray-600'>
                   Mostrando {products.length} de {allProducts.length} productos
@@ -204,7 +197,7 @@ export default function ProductsListPage() {
                   <ProductCard key={product.id} {...product} />
                 ))}
               </div>
-              {!filters.searchQuery && (
+              {!filters.searchQuery && !filters.selectedCategories.length && (
                 <Pagination
                   currentPage={page}
                   totalPages={totalPages}
