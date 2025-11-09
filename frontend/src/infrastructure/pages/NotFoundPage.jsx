@@ -1,4 +1,4 @@
-import { Button } from "../shared/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { Home, SearchX } from "lucide-react";
 import { Link } from "react-router";
 
@@ -27,3 +27,4 @@ const NotFound = () => {
 };
 
 export default NotFound;
+

@@ -1,8 +1,9 @@
-import NotFoundOrRedirect from "../NotFoundOrRedirect.jsx";
+import NotFoundOrRedirect from '../pages/NotFoundOrRedirect.jsx';
 
 export const notfoundRoutes = [
   {
-    path: "*",
+    path: '*',
     element: <NotFoundOrRedirect />,
   },
 ];
+
