@@ -58,7 +58,6 @@ export function LoginForm() {
   });
 
   function onSubmit(data) {
-    console.log('LoginForm - onSubmit llamado con:', data);
     login.mutate(data);
   }
 
@@ -75,9 +74,6 @@ export function LoginForm() {
               <span className="text-2xl font-bold">ProEat</span>
             </div>
             <h1 className="text-2xl font-bold text-gray-800">Iniciar Sesión</h1>
-            <p className="text-sm text-gray-600 text-center">
-              Ingresa tus credenciales para acceder
-            </p>
           </div>
           <FormField
             control={form.control}
