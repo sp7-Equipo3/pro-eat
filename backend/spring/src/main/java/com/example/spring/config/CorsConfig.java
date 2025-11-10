@@ -13,13 +13,14 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    @Value("${web.cors.allowed-origins}")
-    private String corsAllowedOrigins;
+    //@Value("${web.cors.allowed-origins,https://pro-eat.vercel.app}")
+    //private String corsAllowedOrigins;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.stream(corsAllowedOrigins.split(",")).map(String::trim).toList());
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        //configuration.setAllowedOriginPatterns(Arrays.stream(corsAllowedOrigins.split(",")).map(String::trim).toList());
         configuration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);
