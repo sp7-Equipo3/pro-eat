@@ -35,16 +35,16 @@ export function LoginForm() {
   const login = useLogin({
     onSuccess: (data) => {
       console.log("Login success - Data recibida:", data);
-      if (data && data.token) {
+      if (data && data.success && data.data && data.data.token) {
         console.log("Token encontrado, guardando...");
-        setAuthToken(data.token);
+        setAuthToken(data.data.token);
         console.log("Token guardado, navegando a:", from);
         navigate(from, { replace: true });
       } else {
         console.warn("No se recibió token en la respuesta:", data);
         clearAuthData();
         form.setError("root", {
-          message: "No se recibió token de autenticación. Por favor, intenta de nuevo.",
+          message: data?.message || "No se recibió token de autenticación. Por favor, intenta de nuevo.",
         });
       }
     },

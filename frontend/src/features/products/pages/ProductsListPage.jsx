@@ -80,12 +80,12 @@ export default function ProductsListPage() {
   });
 
   const products = useMemo(
-    () => paginatedResponse?.content || [],
-    [paginatedResponse?.content]
+    () => paginatedResponse?.data?.content || [],
+    [paginatedResponse?.data?.content]
   );
 
-  const totalPages = paginatedResponse?.totalPages || 0;
-  const totalElements = paginatedResponse?.totalElements || 0;
+  const totalPages = paginatedResponse?.data?.totalPages || 0;
+  const totalElements = paginatedResponse?.data?.totalElements || 0;
 
   useEffect(() => {
     setPage(0);

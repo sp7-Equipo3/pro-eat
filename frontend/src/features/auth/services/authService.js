@@ -2,8 +2,6 @@ import apiClient from '@/shared/services/apiClient.js';
 
 export const login = async (credentials) => {
   const response = await apiClient.post('/api/auth/login', credentials);
-  console.log('authService.login - Response completa:', response);
-  console.log('authService.login - Response.data:', response.data);
   return response.data;
 };
 

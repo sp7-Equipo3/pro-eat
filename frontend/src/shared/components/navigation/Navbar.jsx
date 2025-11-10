@@ -1,10 +1,52 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router';
-import { LayoutDashboard, Package, UtensilsCrossed } from 'lucide-react';
+import { LayoutDashboard, Package, UtensilsCrossed, Menu } from 'lucide-react';
 import { UserMenu } from './UserMenu.jsx';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose
+} from '@/shared/components/ui/sheet.jsx';
+import { Button } from '@/shared/components/ui/button.jsx';
 
 export const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const navLinks = [
+    {
+      to: '/dashboard',
+      icon: LayoutDashboard,
+      label: 'Dashboard'
+    },
+    {
+      to: '/products',
+      icon: Package,
+      label: 'Productos'
+    }
+  ];
+
+  const NavLinkItem = ({ to, icon: Icon, label, onClick }) => (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className={({ isActive, isPending }) =>
+        `flex items-center gap-3 rounded-md transition-all px-3 py-2 ${
+          isPending
+            ? 'opacity-50'
+            : isActive
+            ? 'bg-red-100 text-red-800'
+            : 'hover:bg-gray-100'
+        }`
+      }
+    >
+      <Icon className='h-5 w-5' />
+      <span>{label}</span>
+    </NavLink>
+  );
+
   return (
-    <nav className='py-3 px-3 shadow-md sticky top-0 bg-slate-50'>
+    <nav className='py-3 px-3 shadow-md sticky top-0 bg-slate-50 z-40'>
       <div className='flex justify-between items-center px-3'>
         <div className='flex items-center gap-6'>
           <NavLink
@@ -14,40 +56,43 @@ export const Navbar = () => {
             <UtensilsCrossed className='h-6 w-6' />
             <span className='text-xl font-bold'>ProEat</span>
           </NavLink>
-          <ul className='flex gap-3 [&>a]:p-2 [&>a]:rounded-md [&>a]:transition-all'>
-            <NavLink
-              className={({ isActive, isPending }) =>
-                `flex items-center gap-2 rounded-md transition-all ${
-                  isPending
-                    ? 'opacity-50'
-                    : isActive
-                    ? 'bg-red-100 text-red-800'
-                    : 'hover:bg-gray-100'
-                }`
-              }
-              to={'/dashboard'}
-            >
-              <LayoutDashboard className='h-4 w-4' />
-              Dashboard
-            </NavLink>
-            <NavLink
-              className={({ isActive, isPending }) =>
-                `flex items-center gap-2 rounded-md transition-all ${
-                  isPending
-                    ? 'opacity-50'
-                    : isActive
-                    ? 'bg-red-100 text-red-800'
-                    : 'hover:bg-gray-100'
-                }`
-              }
-              to={'/products'}
-            >
-              <Package className='h-4 w-4' />
-              Productos
-            </NavLink>
+
+          <ul className='hidden md:flex gap-3 [&>a]:p-2 [&>a]:rounded-md [&>a]:transition-all'>
+            {navLinks.map(link => (
+              <NavLinkItem key={link.to} {...link} />
+            ))}
           </ul>
         </div>
-        <UserMenu />
+        <div className='flex items-center gap-2'>
+          <UserMenu />
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='md:hidden'
+                aria-label='Abrir menú de navegación'
+              >
+                <Menu className='h-6 w-6 text-orange-600' />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side='left' className='w-64'>
+              <div className='flex flex-col gap-4 mt-8'>
+                <div className='flex items-center gap-2 text-orange-600 mb-4'>
+                  <UtensilsCrossed className='h-6 w-6' />
+                  <span className='text-xl font-bold'>ProEat</span>
+                </div>
+                <nav className='flex flex-col gap-2'>
+                  {navLinks.map(link => (
+                    <SheetClose key={link.to} asChild>
+                      <NavLinkItem {...link} onClick={() => setIsOpen(false)} />
+                    </SheetClose>
+                  ))}
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </nav>
   );
