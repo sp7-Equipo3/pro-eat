@@ -42,7 +42,8 @@ public class GlobalExceptionHandler {
                 message,
                 errorCode,
                 LocalDateTime.now(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null  // Sin details para errores generales
         );
         return ResponseEntity.status(status).body(error);
     }
@@ -75,20 +76,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
-        log.error("Error de validación en {}: {}", request.getRequestURI(), ex.getMessage());
+        log.error("Error de validación en {}", request.getRequestURI());
 
+        // Construir mapa de errores por campo
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
-            errors.put(fieldName, error.getDefaultMessage());
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
         });
 
-        return buildErrorResponse(
-                "Error de validación: " + errors,
+        // Construir mensaje principal con los campos que tienen error
+        String fieldsWithErrors = String.join(", ", errors.keySet());
+        String message = "Error de validación en los siguientes campos: " + fieldsWithErrors;
+
+        // Crear ErrorResponse con details
+        ErrorResponse errorResponse = new ErrorResponse(
+                message,
                 "VALIDATION_ERROR",
-                HttpStatus.BAD_REQUEST,
-                request
+                request.getRequestURI(),
+                errors
         );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

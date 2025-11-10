@@ -44,7 +44,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                 "No tienes permisos suficientes para acceder a este recurso.",
                 "ACCESS_DENIED",
                 LocalDateTime.now(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null  // Sin details para errores de seguridad
         );
 
         response.setStatus(HttpStatus.FORBIDDEN.value());
