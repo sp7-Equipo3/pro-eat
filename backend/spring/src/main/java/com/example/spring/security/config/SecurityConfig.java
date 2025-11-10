@@ -1,6 +1,8 @@
 package com.example.spring.security.config;
 
 import com.example.spring.security.filter.JwtAuthenticationFilter;
+import com.example.spring.security.handler.CustomAccessDeniedHandler;
+import com.example.spring.security.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +17,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -26,14 +30,22 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout").permitAll()
+                        // Rutas públicas de autenticación
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // Documentación Swagger
                         .requestMatchers(
                                 "/swagger-ui/**",
-                                "/swagger-ui",
                                 "/swagger-ui.html",
-                                "/v3/api-docs",
                                 "/v3/api-docs/**").permitAll()
+
+                        // Todas las demás rutas requieren autenticación
                         .anyRequest().authenticated()
+                )
+                // Manejador para cuando el usuario NO está autenticado (401)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

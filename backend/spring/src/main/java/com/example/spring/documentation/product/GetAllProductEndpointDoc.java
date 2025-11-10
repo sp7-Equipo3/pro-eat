@@ -1,5 +1,6 @@
 package com.example.spring.documentation.product;
 
+import com.example.spring.exceptions.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -30,24 +31,27 @@ import java.lang.annotation.*;
                 description = "Lista paginada de productos obtenidos exitosamente",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(example = """
+                        examples = @ExampleObject(value = """
                 {
-                  "content": [
-                    {
-                       "id": 1,
-                       "name": "Queso",
-                       "description": "...",
-                       "price": "200",
-                       "category": "Almacén"
-                    },
-                    {
-                       "id": 2,
-                       "name": "Pan",
-                       "description": "...",
-                       "price": "...",
-                       "category": "..."
-                    }
-                  ],
+                  "success": true,
+                  "message": "Productos obtenidos exitosamente.",
+                  "data": {
+                    "content": [
+                      {
+                         "id": 1,
+                         "name": "Queso",
+                         "description": "Queso fresco de calidad premium",
+                         "price": 200.50,
+                         "category": "Almacén"
+                      },
+                      {
+                         "id": 2,
+                         "name": "Pan",
+                         "description": "Pan integral artesanal",
+                         "price": 150.75,
+                         "category": "Panadería"
+                      }
+                    ],
                   "pageable": {
                     "sort": {
                       "sorted": false,
@@ -73,21 +77,23 @@ import java.lang.annotation.*;
                   "size": 10,
                   "number": 0,
                   "empty": false
+                  }
                 }
                 """)
                 )
         ),
         @ApiResponse(
                 responseCode = "401",
-                description = "No autorizado (token ausente o inválido)",
+                description = "No autenticado - Token ausente o inválido",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(example = """
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = @ExampleObject(value = """
                 {
-                  "statusCode": 401,
-                  "message": "Acceso no autorizado",
-                  "errorCode": "UNAUTHORIZED",
-                  "details": "...",
+                  "success": false,
+                  "message": "Acceso denegado. Debes iniciar sesión para acceder a este recurso.",
+                  "error": "AUTHENTICATION_REQUIRED",
+                  "timestamp": "2025-11-09T14:30:00",
                   "path": "/api/products"
                 }
             """)
@@ -95,31 +101,16 @@ import java.lang.annotation.*;
         ),
         @ApiResponse(
                 responseCode = "403",
-                description = "Acceso denegado por falta de permisos",
+                description = "Sin permisos - Usuario autenticado pero sin rol necesario",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(example = """
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = @ExampleObject(value = """
                 {
-                  "statusCode": 403,
-                  "message": "Acceso denegado",
-                  "errorCode": "FORBIDDEN",
-                  "details": "...",
-                  "path": "/api/products"
-                }
-            """)
-                )
-        ),
-        @ApiResponse(
-                responseCode = "404",
-                description = "Recurso no encontrado (aplica si no hay productos registrados)",
-                content = @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(example = """
-                {
-                  "statusCode": 404,
-                  "message": "No se encontraron productos registrados.",
-                  "errorCode": "NOT_FOUND",
-                  "details": "...",
+                  "success": false,
+                  "message": "No tienes permisos suficientes para acceder a este recurso.",
+                  "error": "ACCESS_DENIED",
+                  "timestamp": "2025-11-09T14:30:00",
                   "path": "/api/products"
                 }
             """)
@@ -130,12 +121,13 @@ import java.lang.annotation.*;
                 description = "Error interno del servidor",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(example = """
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = @ExampleObject(value = """
                 {
-                  "statusCode": 500,
-                  "message": "Error inesperado",
-                  "errorCode": "INTERNAL_SERVER_ERROR",
-                  "details": "...",
+                  "success": false,
+                  "message": "Error interno del servidor. Contacta al administrador.",
+                  "error": "INTERNAL_SERVER_ERROR",
+                  "timestamp": "2025-11-09T14:30:00",
                   "path": "/api/products"
                 }
             """)

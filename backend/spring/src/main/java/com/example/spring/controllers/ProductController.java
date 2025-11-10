@@ -27,15 +27,17 @@ public class ProductController {
     @GetAllProductEndpointDoc
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<Page<ProductResponseDto>> getAllProducts(@ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(productService.getAllProducts(pageable));
+    public ResponseEntity<ApiResult<?>> getAllProducts(@ParameterObject Pageable pageable) {
+        Page<ProductResponseDto> products = productService.getAllProducts(pageable);
+        return ResponseEntity.ok(ApiResult.success(products, "Productos obtenidos exitosamente."));
     }
 
     @GetProductEndpointDoc
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ProductResponseDto> getProductById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+    public ResponseEntity<ApiResult<?>> getProductById(@PathVariable Long id) {
+        ProductResponseDto product = productService.getProductById(id);
+        return ResponseEntity.ok(ApiResult.success(product, "Producto encontrado exitosamente."));
     }
 
     @CreateProductEndpointDoc
@@ -50,17 +52,17 @@ public class ProductController {
     @UpdateProductEndpointDoc
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequestDto requestDto) {
-        ProductResponseDto updatedOrder = productService.editProduct(id, requestDto);
-        return ResponseEntity.ok(updatedOrder);
+    public ResponseEntity<ApiResult<?>> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequestDto requestDto) {
+        ProductResponseDto updatedProduct = productService.editProduct(id, requestDto);
+        return ResponseEntity.ok(ApiResult.success(updatedProduct, "Producto actualizado exitosamente."));
     }
 
     @DeleteProductEndpointDoc
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<ApiResult<?>> deleteProduct(@PathVariable Long id) {
         productService.deleteProductById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResult.success("Producto eliminado exitosamente."));
     }
 
 }
