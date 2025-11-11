@@ -1,9 +1,7 @@
 package com.example.spring.documentation.auth;
 
-import com.example.spring.exceptions.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,43 +16,49 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Operation(
-        summary = "Cerrar sesión",
+        summary = "Cerrar sesión (logout)",
         description = """
         Invalida el token JWT actual del usuario para cerrar sesión de forma segura. \s
         Requiere autenticación mediante token JWT válido.
         """,
         security = @SecurityRequirement(name = "bearer-key")
 )
-@ApiResponses(value = {
+@ApiResponses({
         @ApiResponse(
                 responseCode = "200",
                 description = "Logout exitoso",
                 content = @Content(
                         mediaType = "application/json",
-                        examples = @ExampleObject(value = """
+                        schema = @Schema(
+                                example = """
                 {
                   "success": true,
-                  "message": "Logout exitoso.",
+                  "message": "Logout exitoso",
                   "data": null
                 }
-            """)
+                """
+                        )
                 )
         ),
         @ApiResponse(
                 responseCode = "401",
-                description = "No autenticado - Token ausente o inválido",
+                description = "No autorizado: token ausente o inválido",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Acceso denegado. Debes iniciar sesión para acceder a este recurso.",
-                  "error": "AUTHENTICATION_REQUIRED",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/logout"
-                }
-            """)
+                        schema = @Schema(
+                                example = """
+                                                {
+                                                  "statusCode": 401,
+                                                  "errorCode": "AUTH_ERROR",
+                                                  "message": "Token inválido o ausente",
+                                                  "details": [
+                                                    "El token JWT no fue proporcionado o es inválido."
+                                                  ],
+                                                  "timestamp": "2025-11-10T20:12:00Z",
+                                                  "path": "/api/auth/logout"
+                                                }
+                                            """
+                        )
                 )
         ),
         @ApiResponse(
@@ -62,18 +66,19 @@ import java.lang.annotation.*;
                 description = "Error interno del servidor",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Error interno del servidor. Contacta al administrador.",
-                  "error": "INTERNAL_SERVER_ERROR",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/logout"
-                }
-            """)
+                        schema = @Schema(
+                                example = """
+                                                {
+                                                  "statusCode": 500,
+                                                  "errorCode": "SERVICE_UNAVAILABLE",
+                                                  "message": "Error al registrar el usuario",
+                                                  "details": ["Error inesperado en el servidor."],
+                                                  "timestamp": "2025-11-10T20:12:00Z",
+                                                  "path": "/api/auth/logout"
+                                                }
+                                           """
+                        )
                 )
         )
 })
 public @interface LogoutEndpointDoc {}
-

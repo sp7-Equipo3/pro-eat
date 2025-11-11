@@ -7,6 +7,7 @@ import com.example.spring.dtos.auth.LoginRequestDto;
 import com.example.spring.dtos.auth.LoginResponseDto;
 import com.example.spring.dtos.auth.RegisterRequestDto;
 import com.example.spring.dtos.auth.RegisterResponseDto;
+import com.example.spring.exceptions.UnauthorizedException;
 import com.example.spring.services.AuthService;
 import com.example.spring.utils.ApiResult;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,6 +48,9 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResult<?>> logout(HttpServletRequest requestDto) {
         String authHeader = requestDto.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new UnauthorizedException("Acceso no autorizado. Token ausente.");
+        }
         String token = authHeader.substring(7);
         authService.logout(token);
         return ResponseEntity.ok(ApiResult.success("Logout exitoso."));

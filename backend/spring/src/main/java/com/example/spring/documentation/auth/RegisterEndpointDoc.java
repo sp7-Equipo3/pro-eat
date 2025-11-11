@@ -1,6 +1,5 @@
 package com.example.spring.documentation.auth;
 
-import com.example.spring.exceptions.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -20,79 +19,165 @@ import java.lang.annotation.*;
         summary = "Registrar nuevo usuario",
         description = "Crea una nueva cuenta de usuario en el sistema"
 )
-@ApiResponses(value = {
-        @ApiResponse(
-                responseCode = "201",
-                description = "Usuario registrado exitosamente",
-                content = @Content(
-                        mediaType = "application/json",
-                        examples = @ExampleObject(value = """
-                {
-                  "success": true,
-                  "message": "Usuario registrado exitosamente.",
-                  "data": {
-                    "username": "john_doe",
-                    "role": "USER"
-                  }
-                }
-            """)
+@ApiResponses(
+        value = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Registro exitoso",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(
+                                        example = """
+                                                   {
+                                                     "success": true,
+                                                     "message": "Registro completado con éxito",
+                                                     "data": {
+                                                       "id": "9a0ddb38-b67f-4828-b50c-844701da868f",
+                                                       "username": "john_doe",
+                                                       "role": "USER"
+                                                     }
+                                                   }
+                                                """
+                                )
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Solicitud inválida: error de validación o datos incorrectos",
+                        content = @Content(
+                                mediaType = "application/json",
+                                examples = {
+                                        @ExampleObject(
+                                                name = "Error de validación",
+                                                summary = "Cuando faltan campos obligatorios o no cumplen formato",
+                                                value = """
+                                                        {
+                                                           "statusCode": 400,
+                                                           "errorCode": "VALIDATION_ERROR",
+                                                           "message": "Falló la validación de los campos",
+                                                           "details": [
+                                                             "username: El username es requerido"
+                                                           ],
+                                                           "timestamp": "2025-11-10T20:12:00Z",
+                                                           "path": "/api/auth/register"
+                                                         }
+                                                """
+                                        )
+                                }
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "No autorizado: token inválido o ausente",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(
+                                        example = """
+                                                {
+                                                   "statusCode": 401,
+                                                   "errorCode": "AUTH_ERROR",
+                                                   "message": "Acceso no autorizado. Token inválido o ausente.",
+                                                   "details": [
+                                                     "Se requiere estar autenticado para acceder a este recurso"
+                                                   ],
+                                                   "timestamp": "2025-11-10T20:12:00Z",
+                                                   "path": "/api/auth/register"
+                                                 }
+                                        """
+                                )
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "El usuario autenticado no tiene los permisos para acceder a este recurso",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(
+                                        example = """
+                                                {
+                                                   "statusCode": 403,
+                                                   "errorCode": "FORBIDDEN",
+                                                   "message": "Acceso denegado: no tienes permisos para acceder a este recurso",
+                                                   "details": [
+                                                     "El usuario no tiene autorización suficiente para realizar esta acción."
+                                                   ],
+                                                   "timestamp": "2025-11-10T20:12:00Z",
+                                                   "path": "/api/auth/register"
+                                                 }
+                                        """
+                                )
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "409",
+                        description = "Conflicto: username ya registrado",
+                        content =
+                        @Content(
+                                mediaType = "application/json",
+                                schema =
+                                @Schema(
+                                        example =
+                                                """
+                                                {
+                                                  "statusCode": 409,
+                                                  "errorCode": "CONFLICT",
+                                                  "message": "El username ya está en uso",
+                                                  "details": ["username: john_doe ya utilizado."],
+                                                  "timestamp": "2025-11-10T20:12:00Z",
+                                                  "path": "/api/auth/register"
+                                                }
+                                                """
+                                )
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Error interno del servidor o servicio no disponible",
+                        content =
+                        @Content(
+                                mediaType = "application/json",
+                                schema =
+                                @Schema(
+                                        example =
+                                                """
+                                                {
+                                                  "statusCode": 500,
+                                                  "errorCode": "SERVICE_UNAVAILABLE",
+                                                  "message": "Error al registrar el usuario",
+                                                  "details": ["Error inesperado en el servidor."],
+                                                  "timestamp": "2025-11-10T20:12:00Z",
+                                                  "path": "/api/auth/register"
+                                                }
+                                                """
+                                )
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "503",
+                        description = "Error interno relacionado con el servicio SMTP",
+                        content =
+                        @Content(
+                                mediaType = "application/json",
+                                schema =
+                                @Schema(
+                                        example =
+                                                """
+                                                        {
+                                                           "statusCode": 503,
+                                                           "errorCode": "MAIL_ERROR",
+                                                           "message": "Error de autenticación al enviar el correo: verifica usuario y contraseña del SMTP",
+                                                           "details": [
+                                                             "Authentication failed"
+                                                           ],
+                                                           "timestamp": "2025-11-10T20:12:00Z",
+                                                           "path": "/api/auth/register"
+                                                         }
+                                                """
+                                )
+                        )
                 )
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "Error de validación - Datos incorrectos o incompletos",
-                content = @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Error de validación en los siguientes campos: username, password",
-                  "error": "VALIDATION_ERROR",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/register",
-                  "details": {
-                    "username": "el nombre de usuario debe tener entre 3 y 20 caracteres",
-                    "password": "la contraseña es obligatoria"
-                  }
-                }
-            """)
-                )
-        ),
-        @ApiResponse(
-                responseCode = "409",
-                description = "Conflicto - Usuario ya existe",
-                content = @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Usuario ya existe con username: john_doe",
-                  "error": "DUPLICATE_RESOURCE",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/register"
-                }
-            """)
-                )
-        ),
-        @ApiResponse(
-                responseCode = "500",
-                description = "Error interno del servidor",
-                content = @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Error interno del servidor. Contacta al administrador.",
-                  "error": "INTERNAL_SERVER_ERROR",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/register"
-                }
-            """)
-                )
-        )
-})
+
+        }
+)
 public @interface RegisterEndpointDoc {}
 

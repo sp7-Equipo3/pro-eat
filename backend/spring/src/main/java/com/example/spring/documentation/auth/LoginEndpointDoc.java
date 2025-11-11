@@ -1,6 +1,5 @@
 package com.example.spring.documentation.auth;
 
-import com.example.spring.exceptions.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -17,8 +16,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Operation(
-        summary = "Iniciar sesión",
-        description = "Autentica un usuario y devuelve un token JWT"
+        summary = "Login de usuario",
+        description = """
+         Autentica al usuario con username y contraseña. \s
+         Devuelve un token JWT en el cuerpo con estado <b>200 OK</b>.
+        \s"""
 )
 @ApiResponses(value = {
         @ApiResponse(
@@ -26,52 +28,61 @@ import java.lang.annotation.*;
                 description = "Login exitoso",
                 content = @Content(
                         mediaType = "application/json",
-                        examples = @ExampleObject(value = """
-                {
-                  "success": true,
-                  "message": "Login exitoso.",
-                  "data": {
-                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                  }
-                }
-            """)
+                        schema = @Schema(
+                                example = """
+                                    {
+                                      "success": true,
+                                      "message": "Login exitoso",
+                                      "data": { "token": "eyJhbGci..." }
+                                    }
+                                """
+                        )
                 )
         ),
         @ApiResponse(
                 responseCode = "400",
-                description = "Error de validación - Datos incorrectos o incompletos",
+                description = "Error de validacion de los campos enviados",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Error de validación en los siguientes campos: username",
-                  "error": "VALIDATION_ERROR",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/login",
-                  "details": {
-                    "username": "el nombre de usuario es obligatorio"
-                  }
-                }
-            """)
+                        examples = {
+                                @ExampleObject(
+                                        name = "Error de validación",
+                                        summary = "Cuando faltan campos requeridos o tienen formato incorrecto",
+                                        value = """
+                                            {
+                                               "statusCode": 400,
+                                               "errorCode": "VALIDATION_ERROR",
+                                               "message": "Falló la validación de los campos",
+                                               "details": [
+                                                 "username: El username es requerido"
+                                               ],
+                                               "timestamp": "2025-11-10T20:12:00Z",
+                                               "path": "/api/auth/login"
+                                             }
+                                        """
+                                )
+                        }
                 )
         ),
         @ApiResponse(
                 responseCode = "401",
-                description = "Credenciales incorrectas",
+                description = "Credenciales inválidas",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Credenciales incorrectas. Verifica tu usuario y contraseña.",
-                  "error": "AUTHENTICATION_ERROR",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/login"
-                }
-            """)
+                        schema = @Schema(
+                                example = """
+                                    {
+                                      "statusCode": 401,
+                                      "errorCode": "BAD_CREDENTIALS",
+                                      "message": "Credenciales inválidas",
+                                      "details": [
+                                        "El username o la contraseña son incorrectos."
+                                      ],
+                                      "timestamp": "2025-11-10T20:12:00Z",
+                                      "path": "/api/auth/login"
+                                    }
+                                """
+                        )
                 )
         ),
         @ApiResponse(
@@ -79,18 +90,21 @@ import java.lang.annotation.*;
                 description = "Error interno del servidor",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Error interno del servidor.",
-                  "error": "INTERNAL_SERVER_ERROR",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/auth/login"
-                }
-            """)
+                        schema = @Schema(
+                                example = """
+                                    {
+                                      "statusCode": 500,
+                                      "errorCode": "SERVICE_UNAVAILABLE",
+                                      "message": "Error al registrar el usuario",
+                                      "details": ["Error inesperado en el servidor."],
+                                      "timestamp": "2025-11-10T20:12:00Z",
+                                      "path": "/api/auth/login"
+                                    }
+                                """
+                        )
                 )
         )
 })
-public @interface LoginEndpointDoc {}
+public @interface LoginEndpointDoc {
+}
 

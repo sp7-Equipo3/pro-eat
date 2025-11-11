@@ -14,9 +14,11 @@ public record RegisterRequestDto(
         @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "el nombre de usuario solo puede contener letras, números y guiones bajos")
         String username,
 
-        @Schema(description = "Contraseña del usuario", example = "password123")
+        @Schema(description = "Contraseña del usuario", example = "Password123@")
         @NotBlank(message = "la contraseña es obligatoria")
-        @Size(min = 6, max = 100, message = "la contraseña debe tener entre 6 y 100 caracteres")
+        @Size(min = 8, max = 64, message = "La contraseña debe tener entre 8 y 64 caracteres")
+        @Pattern(regexp = "^(?=.*[A-ZÑ])(?=.*[a-zñ])(?=.*\\d)(?=.*[-@#$%^&*.,()_+{}|;:'\"<>/!¡¿?])[A-ZÑa-zñ\\d-@#$%^&*.,()_+{}|;:'\"<>/!¡¿?]{6,}$",
+                message = "La contraseña debe contener al menos una letra mayuscula, una letra minuscula, un numero, y un caracter especial.")
         String password
 ) {
 }

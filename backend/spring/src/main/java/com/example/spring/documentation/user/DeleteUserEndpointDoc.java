@@ -1,8 +1,7 @@
-package com.example.spring.documentation.product;
+package com.example.spring.documentation.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -11,24 +10,25 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.lang.annotation.*;
 
 /**
- * Swagger documentation for DELETE /api/products/id.
+ * Swagger documentation for DELETE /api/users.
  */
+
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Operation(
-        summary = "Eliminar producto",
+        summary = "Eliminar Usuario",
         description = """
-        Elimina definitivamente un producto por su ID único. \s
-        Requiere autenticación de usuarios con rol <strong>ADMIN</strong>
+        Elimina un usuario de manera logica del sistema por su ID único. \
+        Solo usuarios con rol <strong>ADMIN</strong> pueden realizar esta operación.
         """,
         security = @SecurityRequirement(name = "bearer-key")
 )
 @ApiResponses(value = {
         @ApiResponse(
                 responseCode = "204",
-                description = "Producto eliminado correctamente",
-                content = @Content // sin body (no content)
+                description = "Usuario eliminado correctamente",
+                content = @Content(mediaType = "application/json")
         ),
         @ApiResponse(
                 responseCode = "401",
@@ -42,14 +42,14 @@ import java.lang.annotation.*;
                           "message": "Acceso no autorizado",
                           "details": "Token inválido o expirado",
                           "timestamp": "2025-11-10T20:12:00Z",
-                          "path": "/api/products/{id}"
+                          "path": "/api/users/{id}"
                         }
                         """)
                 )
         ),
         @ApiResponse(
                 responseCode = "403",
-                description = "Acceso denegado: el rol del usuario no tiene permisos para eliminar",
+                description = "Acceso denegado por falta de permisos",
                 content = @Content(
                         mediaType = "application/json",
                         schema = @Schema(example = """
@@ -57,26 +57,26 @@ import java.lang.annotation.*;
                           "statusCode": 403,
                           "errorCode": "FORBIDDEN",
                           "message": "Acceso denegado",
-                          "details": "Se requiere rol ADMIN",
+                          "details": "El usuario no tiene permisos para eliminar el usuario",
                           "timestamp": "2025-11-10T20:12:00Z",
-                          "path": "/api/products/{id}"
+                          "path": "/api/users/{id}"
                         }
                         """)
                 )
         ),
         @ApiResponse(
                 responseCode = "404",
-                description = "Producto no encontrado",
+                description = "Usuario no encontrado",
                 content = @Content(
                         mediaType = "application/json",
                         schema = @Schema(example = """
                         {
                           "statusCode": 404,
                           "errorCode": "NOT_FOUND",
-                          "message": "Producto no encontrado con id: {id}",
-                          "details": "No existe un producto con el ID proporcionado",
+                          "message": "No se encontró usuario con ID: {id}",
+                          "details": "No existe un usuario con el ID proporcionado",
                           "timestamp": "2025-11-10T20:12:00Z",
-                          "path": "/api/products/{id}"
+                          "path": "/api/users/{id}"
                         }
                         """)
                 )
@@ -91,13 +91,12 @@ import java.lang.annotation.*;
                           "statusCode": 500,
                           "errorCode": "INTERNAL_SERVER_ERROR",
                           "message": "Error inesperado",
-                          "details": "NullPointerException ...",
+                          "details": "NullPointerException at line ...",
                           "timestamp": "2025-11-10T20:12:00Z",
-                          "path": "/api/products/{id}"
+                          "path": "/api/users/{id}"
                         }
                         """)
                 )
         )
 })
-
-public @interface DeleteProductEndpointDoc {}
+public @interface DeleteUserEndpointDoc {}

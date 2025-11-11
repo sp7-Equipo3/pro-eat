@@ -1,173 +1,313 @@
 package com.example.spring.exceptions;
 
-import com.example.spring.exceptions.custom.BusinessException;
-import com.example.spring.exceptions.custom.DuplicateResourceException;
-import com.example.spring.exceptions.custom.ResourceNotFoundException;
-import com.example.spring.exceptions.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Manejador global de excepciones para toda la aplicación.
- * Captura y procesa excepciones lanzadas por los controladores,
- * retornando respuestas JSON consistentes.
- */
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * Método helper para crear respuestas de error consistentes.
-     */
-    private ResponseEntity<ErrorResponse> buildErrorResponse(
-            String message, String errorCode, HttpStatus status, HttpServletRequest request) {
-        ErrorResponse error = new ErrorResponse(
-                false,
-                message,
-                errorCode,
-                LocalDateTime.now(),
-                request.getRequestURI(),
-                null  // Sin details para errores generales
-        );
-        return ResponseEntity.status(status).body(error);
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "INTERNAL_SERVER_ERROR",
+            "Ocurrió un error interno en el servidor",
+            Collections.singletonList("Se produjo un error inesperado. Por favor, intenta más tarde."),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    List<String> detalles = ex.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(f -> f.getField() + ": " + f.getDefaultMessage())
+            .collect(Collectors.toList());
+
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "VALIDATION_ERROR",
+            "Falló la validación de los campos",
+            detalles,
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "BAD_REQUEST",
+            "Solicitud inválida",
+            Collections.singletonList(ex.getMessage()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(
+          DataIntegrityViolationException ex, HttpServletRequest request) {
+
+    String rootMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
+
+    String userFriendlyMessage = "Valor duplicado detectado";
+    List<String> details = List.of(rootMessage);
+
+    if (rootMessage != null && rootMessage.contains("Detail: Ya existe la llave")) {
+      int startField = rootMessage.indexOf('(') + 1;
+      int endField = rootMessage.indexOf(')', startField);
+      int startValue = rootMessage.indexOf("=(", endField) + 2;
+      int endValue = rootMessage.indexOf(").", startValue);
+
+      if (startField > 0 && endField > startField && startValue > 1 && endValue > startValue) {
+        String field = rootMessage.substring(startField, endField);
+        String value = rootMessage.substring(startValue, endValue);
+        userFriendlyMessage = "El valor para el campo '" + field + "' ya está en uso";
+        details = List.of(field + ": " + value + " ya registrado.");
+      }
     }
 
-    // ==================== Excepciones Personalizadas ====================
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpServletResponse.SC_CONFLICT,
+            "CONFLICT",
+            userFriendlyMessage,
+            details,
+            request.getRequestURI()
+    );
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
-            ResourceNotFoundException ex, HttpServletRequest request) {
-        log.error("Recurso no encontrado en {}: {}", request.getRequestURI(), ex.getMessage());
-        return buildErrorResponse(ex.getMessage(), "RESOURCE_NOT_FOUND", HttpStatus.NOT_FOUND, request);
-    }
+    return ResponseEntity.status(HttpServletResponse.SC_CONFLICT).body(errorResponse);
+  }
 
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessException(
-            BusinessException ex, HttpServletRequest request) {
-        log.error("Error de negocio en {}: {}", request.getRequestURI(), ex.getMessage());
-        return buildErrorResponse(ex.getMessage(), "BUSINESS_ERROR", HttpStatus.BAD_REQUEST, request);
-    }
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.UNAUTHORIZED.value(),
+            "BAD_CREDENTIALS",
+            "Credenciales inválidas",
+            List.of("El username o la contraseña son incorrectos."),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+  }
 
-    @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateResourceException(
-            DuplicateResourceException ex, HttpServletRequest request) {
-        log.error("Recurso duplicado en {}: {}", request.getRequestURI(), ex.getMessage());
-        return buildErrorResponse(ex.getMessage(), "DUPLICATE_RESOURCE", HttpStatus.CONFLICT, request);
-    }
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpServletResponse.SC_FORBIDDEN,
+            "FORBIDDEN",
+            "Acceso denegado: no tienes permisos para acceder a este recurso",
+            List.of("El usuario no tiene autorización suficiente para realizar esta acción."),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body(errorResponse);
+  }
 
-    // ==================== Validación ====================
+  @ExceptionHandler(InvalidPasswordException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidPasswordException(InvalidPasswordException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "INVALID_PASSWORD",
+            "Contraseña inválida",
+            Collections.singletonList(ex.getMessage()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(
-            MethodArgumentNotValidException ex, HttpServletRequest request) {
-        log.error("Error de validación en {}", request.getRequestURI());
+  @ExceptionHandler(InvalidTokenException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidToken(InvalidTokenException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpServletResponse.SC_UNAUTHORIZED,
+            "AUTH_ERROR",
+            "Token inválido o ausente",
+            List.of("Se requiere autenticación completa para acceder a este recurso."),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(errorResponse);
+  }
 
-        // Construir mapa de errores por campo
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
+  @ExceptionHandler(UserNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.NOT_FOUND.value(),
+            "USER_NOT_FOUND",
+            "Usuario no encontrado",
+            Collections.singletonList(ex.getMessage()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
 
-        // Construir mensaje principal con los campos que tienen error
-        String fieldsWithErrors = String.join(", ", errors.keySet());
-        String message = "Error de validación en los siguientes campos: " + fieldsWithErrors;
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "BAD_REQUEST",
+            ex.getMessage(),
+            Collections.singletonList(ex.getMessage()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 
-        // Crear ErrorResponse con details
-        ErrorResponse errorResponse = new ErrorResponse(
-                message,
-                "VALIDATION_ERROR",
-                request.getRequestURI(),
-                errors
-        );
+  @ExceptionHandler(ConflictException.class)
+  public ResponseEntity<ErrorResponse> handleConflictException(ConflictException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.CONFLICT.value(),
+            "CONFLICT",
+            ex.getMessage(),
+            Collections.singletonList(ex.getMessage()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+  }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
+  @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpServletResponse.SC_FORBIDDEN,
+            "FORBIDDEN",
+            ex.getMessage(),
+            Collections.singletonList(ex.getMessage()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body(errorResponse);
+  }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
-            IllegalArgumentException ex, HttpServletRequest request) {
-        log.error("Argumento ilegal en {}: {}", request.getRequestURI(), ex.getMessage());
-        return buildErrorResponse(ex.getMessage(), "INVALID_ARGUMENT", HttpStatus.BAD_REQUEST, request);
-    }
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.NOT_FOUND.value(),
+            "RESOURCE_NOT_FOUND",
+            ex.getMessage(),
+            Collections.singletonList(ex.getMessage()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+  }
 
-    // ==================== Autenticación ====================
+  @ExceptionHandler(ServiceUnavailableException.class)
+  public ResponseEntity<ErrorResponse> handleServiceUnavailableException(ServiceUnavailableException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.SERVICE_UNAVAILABLE.value(),
+            "SERVICE_UNAVAILABLE",
+            ex.getMessage(),
+            Collections.singletonList(ex.getMessage()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
+  }
 
-    @ExceptionHandler({
-            BadCredentialsException.class,
-            InternalAuthenticationServiceException.class,
-            AuthenticationException.class
-    })
-    public ResponseEntity<ErrorResponse> handleAuthenticationException(
-            Exception ex, HttpServletRequest request) {
-        log.error("Error de autenticación en {}: {}", request.getRequestURI(), ex.getMessage());
+  @ExceptionHandler(UnauthorizedException.class)
+  public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpServletResponse.SC_UNAUTHORIZED,
+            "AUTH_ERROR",
+            ex.getMessage(),
+            Collections.singletonList("Se requiere autenticación completa para acceder a este recurso."),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(errorResponse);
+  }
 
-        String message = ex instanceof BadCredentialsException
-                ? "Credenciales incorrectas. Verifica tu usuario y contraseña."
-                : "Error de autenticación. Verifica tus credenciales.";
+  @ExceptionHandler(BusinessException.class)
+  public ResponseEntity<ErrorResponse> handleBusinessException(
+          BusinessException ex, HttpServletRequest request) {
 
-        return buildErrorResponse(message, "AUTHENTICATION_ERROR", HttpStatus.UNAUTHORIZED, request);
-    }
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "BUSINESS_ERROR",
+            ex.getMessage(),
+            List.of(ex.getMessage()),
+            request.getRequestURI()
+    );
 
-    // ==================== Rutas y Métodos HTTP ====================
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 
-    @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
-    public ResponseEntity<ErrorResponse> handleNotFoundException(HttpServletRequest request) {
-        log.error("Ruta no encontrada: {}", request.getRequestURI());
-        return buildErrorResponse(
-                String.format("La ruta '%s' no existe.", request.getRequestURI()),
-                "ROUTE_NOT_FOUND",
-                HttpStatus.NOT_FOUND,
-                request
-        );
-    }
+  @ExceptionHandler(DuplicateResourceException.class)
+  public ResponseEntity<ErrorResponse> handleDuplicateResourceException(
+          DuplicateResourceException ex, HttpServletRequest request) {
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleMethodNotSupportedException(
-            HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
-        log.error("Método HTTP no soportado en {}: {}", request.getRequestURI(), ex.getMethod());
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.CONFLICT.value(),
+            "DUPLICATE_RESOURCE",
+            ex.getMessage(),
+            List.of(ex.getMessage()),
+            request.getRequestURI()
+    );
 
-        String supportedMethods = ex.getSupportedHttpMethods() != null
-                ? ex.getSupportedHttpMethods().toString()
-                : "ninguno";
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+  }
 
-        return buildErrorResponse(
-                String.format("Método '%s' no permitido. Métodos soportados: %s", ex.getMethod(), supportedMethods),
-                "METHOD_NOT_ALLOWED",
-                HttpStatus.METHOD_NOT_ALLOWED,
-                request
-        );
-    }
+  @ExceptionHandler(org.springframework.web.bind.MissingServletRequestParameterException.class)
+  public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(org.springframework.web.bind.MissingServletRequestParameterException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "MISSING_PARAMETER",
+            "Falta un parámetro obligatorio",
+            Collections.singletonList("Parámetro faltante: " + ex.getParameterName()),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 
-    // ==================== Catch-All ====================
+  @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(org.springframework.http.converter.HttpMessageNotReadableException ex, HttpServletRequest request) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "MESSAGE_NOT_READABLE",
+            "El cuerpo de la solicitud es inválido o está mal formado",
+            List.of("Revisa la estructura de los datos enviados en la petición."),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(
-            Exception ex, HttpServletRequest request) {
-        log.error("Error no manejado en {}: {}", request.getRequestURI(), ex.getMessage(), ex);
-        return buildErrorResponse(
-                "Error interno del servidor.",
-                "INTERNAL_SERVER_ERROR",
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                request
-        );
-    }
+  @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+  public ResponseEntity<ErrorResponse> handleAuthenticationException(
+          org.springframework.security.core.AuthenticationException ex, HttpServletRequest request) {
+
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.UNAUTHORIZED.value(),
+            "AUTHENTICATION_ERROR",
+            "Error de autenticación",
+            List.of(ex.getMessage()),
+            request.getRequestURI()
+    );
+
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+  }
+
+  @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+  public ResponseEntity<ErrorResponse> handleMethodNotSupportedException(
+          org.springframework.web.HttpRequestMethodNotSupportedException ex,
+          HttpServletRequest request) {
+
+    ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.METHOD_NOT_ALLOWED.value(),
+            "METHOD_NOT_ALLOWED",
+            "Método HTTP no permitido",
+            List.of(ex.getMessage()),
+            request.getRequestURI()
+    );
+
+    return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResponse);
+  }
 }
-

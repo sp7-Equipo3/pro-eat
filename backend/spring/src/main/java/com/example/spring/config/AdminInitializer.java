@@ -23,11 +23,11 @@ public class AdminInitializer implements CommandLineRunner {
 
         User admin = new User();
         admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("admin"));
+        admin.setPassword(passwordEncoder.encode("Admin123@"));
         admin.setRole(Role.ADMIN);
 
         userRepository.save(admin);
 
-        System.out.println("Initial admin created: username=admin, password=admin");
+        System.out.println("Initial admin created: username=admin, password=Admin123@");
     }
 }
