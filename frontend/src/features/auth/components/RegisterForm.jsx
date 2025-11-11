@@ -33,13 +33,13 @@ export function RegisterForm() {
 
   const register = useRegister({
     onSuccess: (data) => {
-      if (data.token) {
-        setAuthToken(data.token);
+      if (data && data.success && data.data && data.data.token) {
+        setAuthToken(data.data.token);
         toast.success("¡Registro exitoso!", {
           description: "Tu cuenta ha sido creada correctamente.",
         });
         navigate("/dashboard", { replace: true });
-      } else {
+      } else if (data && data.success) {
         clearAuthData();
         toast.info("Registro completado", {
           description: "Por favor, inicia sesión para continuar.",
@@ -48,14 +48,30 @@ export function RegisterForm() {
       }
     },
     onError: (error) => {
-      console.error("Error al registrarse:", error.message);
+      console.error("Error al registrarse:", error);
       clearAuthData();
-      toast.error("Error al registrarse", {
-        description: error.message || "Por favor, intenta de nuevo.",
-      });
-      form.setError("root", {
-        message: error.message || "Error al registrarse. Por favor, intenta de nuevo.",
-      });
+
+      const errorData = error?.response?.data || error?.data || {};
+      const errorDetails = errorData.details || {};
+
+      if (errorData.error === 'VALIDATION_ERROR' && Object.keys(errorDetails).length > 0) {
+        Object.keys(errorDetails).forEach((field) => {
+          form.setError(field, {
+            type: 'server',
+            message: errorDetails[field],
+          });
+        });
+        toast.error("Error de validación", {
+          description: errorData.message || "Por favor, corrige los errores en el formulario.",
+        });
+      } else {
+        toast.error("Error al registrarse", {
+          description: errorData.message || error.message || "Por favor, intenta de nuevo.",
+        });
+        form.setError("root", {
+          message: errorData.message || error.message || "Error al registrarse. Por favor, intenta de nuevo.",
+        });
+      }
     },
   });
 
