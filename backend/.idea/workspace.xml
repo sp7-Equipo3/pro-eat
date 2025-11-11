@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9a2400a8-9e43-4e28-8c9f-2a87799feadd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/config/SwaggerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/documentation/product/CreateProductEndpointDoc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/documentation/product/DeleteProductEndpointDoc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/documentation/product/GetAllProductEndpointDoc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/documentation/product/GetProductEndpointDoc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/documentation/product/UpdateProductEndpointDoc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/dtos/product/ProductRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/dtos/product/ProductResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/mappers/ProductMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/services/ProductService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/services/impl/ProductServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/utils/ApiResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/backend.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/spring/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/config/CorsConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/controllers/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/controllers/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/controllers/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/controllers/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/dtos/auth/LoginRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/dtos/auth/LoginRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/entity/ProductEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/models/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/entity/UserEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/repositories/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/repositories/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/security/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/security/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/services/ProductServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/java/com/example/spring/services/interfaces/ProductService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/spring/src/main/resources/application.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Record" />
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="35ALLiqyL0th7tNIu49esw0ZRzr" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven.Unknown [spring-boot:run...].executor": "Run",
+    "Maven.spring [clean,i].executor": "Run",
+    "Maven.spring [clean,install].executor": "Run",
+    "Maven.spring [clean].executor": "Run",
+    "Maven.spring [compile].executor": "Run",
+    "Maven.spring [spring-boot:run,\\...].executor": "Run",
+    "Maven.spring [spring-boot:run...].executor": "Run",
+    "Maven.spring [spring-boot:run].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.Application.executor": "Run",
+    "git-widget-placeholder": "back-dev",
+    "last_opened_file_path": "C:/Users/josea/OneDrive/Escritorio/Foo Talent/2da edición/Proyecto/pro-eat/backend/spring",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.runner",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\josea\OneDrive\Escritorio\Foo Talent\2da edición\Proyecto\pro-eat\backend\spring" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\josea\OneDrive\Escritorio\Foo Talent\2da edición\Proyecto\pro-eat\backend\spring\src\main\java\com\example\spring\documentation\product" />
+      <recent name="C:\Users\josea\OneDrive\Escritorio\Foo Talent\2da edición\Proyecto\pro-eat\backend\spring\src\main\java\com\example\spring\utils" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.spring.documentation.product" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn compile" />
+      <command value="mvn spring-boot:run" />
+      <command value="mvn spring-boot:run -Dspring-boot.run.jvmArguments=&quot;-Duser.timezone=UTC&quot; " />
+      <command value="mvn spring-boot:run \   -Dspring-boot.run.jvmArguments=&quot;-Duser.timezone=America/Argentina/Buenos_Aires&quot;" />
+      <command value="mvn spring-boot:run -Dspring-boot.run.jvmArguments=&quot;-Duser.timezone=America/Buenos_Aires" />
+      <command value="mvn spring-boot:run -Dspring-boot.run.jvmArguments=&quot;-Duser.timezone=America/Buenos_Aires&quot; " />
+      <command value="mvn clean i" />
+      <command value="mvn clean install" />
+      <command value="mvn clean" />
+      <command value="mvn spring-boot:run -Dspring-boot.run.jvmArguments=&quot;-Duser.timezone=America/Argentina/Buenos_Aires&quot; " />
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="spring" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.spring.Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9a2400a8-9e43-4e28-8c9f-2a87799feadd" name="Changes" comment="" />
+      <created>1762547876567</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1762547876567</updated>
+      <workItem from="1762547878106" duration="19780000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
