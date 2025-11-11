@@ -1,6 +1,5 @@
 package com.example.spring.security.service;
 
-
 import com.example.spring.models.TokenBlacklist;
 import com.example.spring.repositories.TokenBlacklistRepository;
 import lombok.RequiredArgsConstructor;

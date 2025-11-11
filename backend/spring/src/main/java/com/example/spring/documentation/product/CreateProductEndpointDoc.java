@@ -1,6 +1,6 @@
+
 package com.example.spring.documentation.product;
 
-import com.example.spring.exceptions.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -35,74 +35,99 @@ import java.lang.annotation.*;
                 description = "Producto creado correctamente",
                 content = @Content(
                         mediaType = "application/json",
-                        examples = @ExampleObject(value = """
-                {
-                  "success": true,
-                  "message": "Producto creada correctamente.",
-                  "data": {
-                    "id": 1,
-                    "name": "Queso",
-                    "description": "Queso fresco de calidad premium",
-                    "price": 200.50,
-                    "category": "Almacén"
-                  }
-                }
-                """)
+                        schema = @Schema(
+                                example = """
+                    {
+                      "success": true,
+                      "message": "Producto creado correctamente.",
+                      "data": {
+                        "id": 1,
+                        "name": "Queso",
+                        "description": "...",
+                        "price": "200",
+                        "category": "Almacén",
+                      }
+                    }
+                """
+                        )
                 )
         ),
         @ApiResponse(
                 responseCode = "400",
-                description = "Error de validación - Datos incorrectos o incompletos",
+                description = "Solicitud inválida: error de validación o datos incorrectos",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Error de validación en los siguientes campos: name, price",
-                  "error": "VALIDATION_ERROR",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/products",
-                  "details": {
-                    "name": "el nombre del producto es obligatorio",
-                    "price": "el precio es obligatorio"
-                  }
-                }
-            """)
+                        examples = {
+                                @ExampleObject(
+                                        name = "Campos requeridos faltantes",
+                                        summary = "Cuando falta el nombre o otro campo obligatorio",
+                                        value = """
+                                            {
+                                              "statusCode": 400,
+                                              "errorCode": "VALIDATION_ERROR",
+                                              "message": "Error validation with data",
+                                              "details": "name: no puede estar vacío",
+                                              "timestamp": "2025-11-10T20:12:00Z",
+                                              "path": "/api/products"
+                                            }
+                                        """
+                                )
+                        }
                 )
         ),
         @ApiResponse(
                 responseCode = "401",
-                description = "No autenticado - Token ausente o inválido",
+                description = "No autorizado (token ausente o inválido)",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Acceso denegado. Debes iniciar sesión para acceder a este recurso.",
-                  "error": "AUTHENTICATION_REQUIRED",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/products"
-                }
-            """)
+                        schema = @Schema(
+                                example = """
+                    {
+                      "statusCode": 401,
+                      "errorCode": "UNAUTHORIZED",
+                      "message": "Acceso no autorizado",
+                      "details": "...",
+                      "timestamp": "2025-11-10T20:12:00Z",
+                      "path": "/api/products"
+                    }
+                """
+                        )
                 )
         ),
         @ApiResponse(
                 responseCode = "403",
-                description = "Sin permisos - Usuario autenticado pero sin rol necesario",
+                description = "Acceso denegado por falta de permisos",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "No tienes permisos suficientes para acceder a este recurso.",
-                  "error": "ACCESS_DENIED",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/products"
-                }
-            """)
+                        schema = @Schema(
+                                example = """
+                    {
+                      "statusCode": 403,
+                      "errorCode": "FORBIDDEN",
+                      "message": "Acceso denegado",
+                      "details": "Se requiere rol ADMIN o USER",
+                      "timestamp": "2025-11-10T20:12:00Z",
+                      "path": "/api/products"
+                    }
+                """
+                        )
+                )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                description = "Producto no encontrado",
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(example = """
+                        {
+                          "statusCode": 404,
+                          "errorCode": "NOT_FOUND",
+                          "message": "Producto no encontrado con id: {id}",
+                          "details": "...",
+                          "timestamp": "2025-11-10T20:12:00Z",
+                          "path": "/api/products"
+                        }
+                        """)
                 )
         ),
         @ApiResponse(
@@ -110,16 +135,18 @@ import java.lang.annotation.*;
                 description = "Error interno del servidor",
                 content = @Content(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = ErrorResponse.class),
-                        examples = @ExampleObject(value = """
-                {
-                  "success": false,
-                  "message": "Error interno del servidor. Contacta al administrador.",
-                  "error": "INTERNAL_SERVER_ERROR",
-                  "timestamp": "2025-11-09T14:30:00",
-                  "path": "/api/products"
-                }
-            """)
+                        schema = @Schema(
+                                example = """
+                    {
+                      "statusCode": 500,
+                      "errorCode": "INTERNAL_ERROR",
+                      "message": "Internal Error Server",
+                      "details": "NullPointerException...",
+                      "timestamp": "2025-11-10T20:12:00Z",
+                      "path": "/api/products"
+                    }
+                """
+                        )
                 )
         )
 })
