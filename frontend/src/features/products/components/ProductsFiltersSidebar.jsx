@@ -17,8 +17,8 @@ export function ProductsFiltersSidebar({
   onSearchChange,
   sort,
   onSortChange,
-  selectedCategories,
-  onCategoriesChange,
+  selectedCategories, // eslint-disable-line no-unused-vars
+  onCategoriesChange, // eslint-disable-line no-unused-vars
   isCollapsed,
   onToggleCollapse
 }) {
@@ -31,10 +31,11 @@ export function ProductsFiltersSidebar({
 
       <SortSelector value={sort} onChange={onSortChange} />
 
-      <CategoryFilter
+      {/* Filtro de categorías temporalmente oculto - Backend no implementado aún */}
+      {/* <CategoryFilter
         selectedCategories={selectedCategories}
         onChange={onCategoriesChange}
-      />
+      /> */}
     </div>
   );
 

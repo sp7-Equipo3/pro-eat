@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useApiQuery, useApiMutation } from '@/shared/hooks/useApi.js';
+import { useQuery } from '@tanstack/react-query';
+import { useApiMutation } from '@/shared/hooks/useApi.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ProductCard } from '../components/ProductCard.jsx';
@@ -9,6 +10,7 @@ import { CreateProductForm } from '../components/CreateProductForm.jsx';
 import { Button } from '@/shared/components/ui/button';
 import { Filter, Plus } from 'lucide-react';
 import apiClient from '@/shared/services/apiClient.js';
+import { getProducts } from '../services/productService.js';
 
 export default function ProductsListPage() {
   const queryClient = useQueryClient();
@@ -58,24 +60,13 @@ export default function ProductsListPage() {
     filters.selectedCategories
   ]);
 
-  const queryString = useMemo(() => {
-    const queryParamsObj = new URLSearchParams();
-    Object.entries(queryParams).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach(v => queryParamsObj.append(key, v));
-      } else if (value !== undefined && value !== null && value !== '') {
-        queryParamsObj.append(key, value.toString());
-      }
-    });
-    return `/api/products?${queryParamsObj.toString()}`;
-  }, [queryParams]);
-
   const {
     data: paginatedResponse,
     isLoading,
     error
-  } = useApiQuery(['products', queryParams], queryString, {
-    placeholderData: previousData => previousData,
+  } = useQuery({
+    queryKey: ['products', queryParams],
+    queryFn: () => getProducts(queryParams),
     staleTime: 30 * 1000
   });
 
@@ -86,6 +77,7 @@ export default function ProductsListPage() {
 
   const totalPages = paginatedResponse?.data?.totalPages || 0;
   const totalElements = paginatedResponse?.data?.totalElements || 0;
+  const numberOfElements = paginatedResponse?.data?.numberOfElements || 0;
 
   useEffect(() => {
     setPage(0);
@@ -229,13 +221,27 @@ export default function ProductsListPage() {
             </p>
           ) : (
             <>
-              {(filters.searchQuery ||
-                filters.selectedCategories.length > 0) && (
-                <div className='mb-4 text-sm text-gray-600'>
-                  Mostrando {products.length} de {totalElements} productos
-                  {filters.searchQuery && ` para "${filters.searchQuery}"`}
-                </div>
-              )}
+              <div className='mb-4 text-sm text-gray-600'>
+                {filters.searchQuery ||
+                filters.selectedCategories.length > 0 ? (
+                  <>
+                    Mostrando {numberOfElements} de {totalElements} productos
+                    {filters.searchQuery && ` para "${filters.searchQuery}"`}
+                    {filters.selectedCategories.length > 0 && (
+                      <>
+                        {' '}
+                        en categoría
+                        {filters.selectedCategories.length > 1 ? 's' : ''}:{' '}
+                        {filters.selectedCategories.join(', ')}
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    Mostrando {numberOfElements} de {totalElements} productos
+                  </>
+                )}
+              </div>
               <div className='grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8'>
                 {products.map(product => (
                   <ProductCard
