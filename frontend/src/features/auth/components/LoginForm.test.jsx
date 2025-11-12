@@ -154,7 +154,6 @@ describe('LoginForm', () => {
 
   test('debe manejar error de login y mostrar mensaje', async () => {
     const user = userEvent.setup()
-    const mockOnError = vi.fn()
 
     useAuth.useLogin.mockImplementation((options) => {
       setTimeout(() => {
