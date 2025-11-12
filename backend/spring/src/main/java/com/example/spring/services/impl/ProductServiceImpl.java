@@ -7,8 +7,13 @@ import com.example.spring.mappers.ProductMapper;
 import com.example.spring.models.Product;
 import com.example.spring.repositories.ProductRepository;
 import com.example.spring.services.ProductService;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -51,11 +56,31 @@ public class ProductServiceImpl implements ProductService {
         Product auxProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
 
-        if (dto.getName() != null)            auxProduct.setName(dto.getName());
-        if (dto.getDescription() != null)   auxProduct.setDescription(dto.getDescription());
-        if (dto.getPrice() != null)          auxProduct.setPrice(dto.getPrice());
-        if (dto.getCategory() != null)       auxProduct.setCategory(dto.getCategory());
+        if (dto.getName() != null)
+            auxProduct.setName(dto.getName());
+        if (dto.getDescription() != null)
+            auxProduct.setDescription(dto.getDescription());
+        if (dto.getPrice() != null)
+            auxProduct.setPrice(dto.getPrice());
+        if (dto.getCategory() != null)
+            auxProduct.setCategory(dto.getCategory());
 
         return mapper.toResponseDto(productRepository.save(auxProduct));
+    }
+
+    @Override
+    public Page<ProductResponseDto> filterProducts(String name, String category, double minPrice, double maxPrice,
+            Pageable pageable) {
+        Page<Product> filteredProducts = productRepository.filterProducts(name, category, minPrice, maxPrice, pageable);
+        if (filteredProducts.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron productos con los filtros especificados.");
+        }
+        List<ProductResponseDto> dtoList = new ArrayList<>();
+        for (Product product : filteredProducts.getContent()) {
+            dtoList.add(mapper.toResponseDto(product));
+        }
+
+        return new PageImpl<>(dtoList, pageable, filteredProducts.getTotalElements());
+
     }
 }

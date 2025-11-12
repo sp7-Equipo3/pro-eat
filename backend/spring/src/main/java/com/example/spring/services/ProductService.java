@@ -7,8 +7,15 @@ import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
     Page<ProductResponseDto> getAllProducts(Pageable pageable);
+
     ProductResponseDto getProductById(Long id);
+
     ProductResponseDto createProduct(ProductRequestDto dto);
+
     void deleteProductById(Long id);
+
     ProductResponseDto editProduct(Long id, ProductRequestDto ProductRequestDto);
+
+    Page<ProductResponseDto> filterProducts(String name, String category, double minPrice, double maxPrice,
+            Pageable pageable);
 }

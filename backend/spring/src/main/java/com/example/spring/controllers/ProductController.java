@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
@@ -64,5 +65,19 @@ public class ProductController {
         productService.deleteProductById(id);
         return ResponseEntity.ok(ApiResult.success("Producto eliminado exitosamente."));
     }
+
+    @GetMapping("/filter")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<ApiResult<?>> filterProducts(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) double minPrice,
+        @RequestParam(required = false) double maxPrice,
+        @ParameterObject Pageable pageable       ) 
+        {
+            Page<ProductResponseDto> result = productService.filterProducts(name,category,minPrice,maxPrice,pageable);
+            return ResponseEntity.ok(ApiResult.success(result,"Producto filtrado con exito"));
+        }
+    
 
 }
