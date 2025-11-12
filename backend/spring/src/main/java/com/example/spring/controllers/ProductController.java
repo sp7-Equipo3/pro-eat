@@ -42,7 +42,7 @@ public class ProductController {
 
     @CreateProductEndpointDoc
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResult<?>> createProduct(@RequestBody @Valid ProductRequestDto requestDto) {
         ProductResponseDto createdProduct = productService.createProduct(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResult.success(createdProduct,
@@ -51,7 +51,7 @@ public class ProductController {
 
     @UpdateProductEndpointDoc
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResult<?>> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequestDto requestDto) {
         ProductResponseDto updatedProduct = productService.editProduct(id, requestDto);
         return ResponseEntity.ok(ApiResult.success(updatedProduct, "Producto actualizado exitosamente."));
@@ -59,7 +59,7 @@ public class ProductController {
 
     @DeleteProductEndpointDoc
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResult<?>> deleteProduct(@PathVariable Long id) {
         productService.deleteProductById(id);
         return ResponseEntity.ok(ApiResult.success("Producto eliminado exitosamente."));
