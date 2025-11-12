@@ -28,3 +28,7 @@ dist-ssr
 
 # Environment variables
 .env
+
+# Testing
+coverage
+.nyc_output
