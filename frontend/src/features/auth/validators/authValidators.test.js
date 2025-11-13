@@ -6,7 +6,7 @@ describe('authValidators', () => {
     test('debe aceptar datos válidos', () => {
       const validData = {
         username: 'alejandro',
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = loginSchema.safeParse(validData)
       expect(result.success).toBe(true)
@@ -18,7 +18,7 @@ describe('authValidators', () => {
     test('debe rechazar username con menos de 3 caracteres', () => {
       const invalidData = {
         username: 'ab',
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = loginSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
@@ -30,7 +30,7 @@ describe('authValidators', () => {
     test('debe rechazar username con caracteres especiales', () => {
       const invalidData = {
         username: 'alejandro!',
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = loginSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
@@ -44,7 +44,7 @@ describe('authValidators', () => {
     test('debe aceptar username con guiones bajos', () => {
       const validData = {
         username: 'alejandro_123',
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = loginSchema.safeParse(validData)
       expect(result.success).toBe(true)
@@ -83,7 +83,7 @@ describe('authValidators', () => {
     test('debe rechazar password sin letra mayúscula', () => {
       const invalidData = {
         username: 'alejandro',
-        password: 'password123!',
+        password: 'password!',
       }
       const result = loginSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
@@ -95,40 +95,10 @@ describe('authValidators', () => {
       }
     })
 
-    test('debe rechazar password sin letra minúscula', () => {
-      const invalidData = {
-        username: 'alejandro',
-        password: 'PASSWORD123!',
-      }
-      const result = loginSchema.safeParse(invalidData)
-      expect(result.success).toBe(false)
-      if (!result.success) {
-        const passwordError = result.error.issues.find(
-          issue => issue.path[0] === 'password'
-        )
-        expect(passwordError?.message).toContain('minúscula')
-      }
-    })
-
-    test('debe rechazar password sin número', () => {
-      const invalidData = {
-        username: 'alejandro',
-        password: 'Password!',
-      }
-      const result = loginSchema.safeParse(invalidData)
-      expect(result.success).toBe(false)
-      if (!result.success) {
-        const passwordError = result.error.issues.find(
-          issue => issue.path[0] === 'password'
-        )
-        expect(passwordError?.message).toContain('número')
-      }
-    })
-
     test('debe rechazar password sin carácter especial', () => {
       const invalidData = {
         username: 'alejandro',
-        password: 'Password123',
+        password: 'PASSWORD',
       }
       const result = loginSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
@@ -143,7 +113,7 @@ describe('authValidators', () => {
     test('debe rechazar cuando username está vacío', () => {
       const invalidData = {
         username: '',
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = loginSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
@@ -177,7 +147,7 @@ describe('authValidators', () => {
     test('debe verificar mensaje de error para username obligatorio', () => {
       const invalidData = {
         username: '',
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = loginSchema.safeParse(invalidData)
       if (!result.success) {
@@ -193,7 +163,7 @@ describe('authValidators', () => {
     test('debe aceptar datos válidos', () => {
       const validData = {
         username: 'alejandro',
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = registerSchema.safeParse(validData)
       expect(result.success).toBe(true)
@@ -205,7 +175,7 @@ describe('authValidators', () => {
     test('debe rechazar username mayor a 20 caracteres', () => {
       const invalidData = {
         username: 'a'.repeat(21),
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = registerSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
@@ -217,7 +187,7 @@ describe('authValidators', () => {
     test('debe aceptar username con exactamente 20 caracteres', () => {
       const validData = {
         username: 'a'.repeat(20),
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = registerSchema.safeParse(validData)
       expect(result.success).toBe(true)
@@ -241,7 +211,7 @@ describe('authValidators', () => {
     test('debe aceptar password con exactamente 64 caracteres', () => {
       const validData = {
         username: 'alejandro',
-        password: 'P'.repeat(60) + 'ass123!',
+        password: 'P'.repeat(63) + '!',
       }
       const result = registerSchema.safeParse(validData)
       expect(result.success).toBe(true)
@@ -250,7 +220,7 @@ describe('authValidators', () => {
     test('debe aplicar todas las validaciones de loginSchema', () => {
       const invalidData = {
         username: 'ab',
-        password: 'Pass1!',
+        password: 'PASS!',
       }
       const result = registerSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
@@ -259,7 +229,7 @@ describe('authValidators', () => {
     test('debe rechazar username con caracteres especiales (igual que loginSchema)', () => {
       const invalidData = {
         username: 'alejandro!',
-        password: 'Password123!',
+        password: 'PASSWORD!',
       }
       const result = registerSchema.safeParse(invalidData)
       expect(result.success).toBe(false)

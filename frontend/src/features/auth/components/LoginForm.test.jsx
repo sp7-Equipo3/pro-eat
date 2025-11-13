@@ -116,7 +116,8 @@ describe('LoginForm', () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText(/al menos 6 caracteres/i)).toBeInTheDocument()
+      const errorMessage = screen.getByText(/La contraseña debe tener entre 8 y 64 caracteres/i)
+      expect(errorMessage).toBeInTheDocument()
     })
   })
 
@@ -129,13 +130,13 @@ describe('LoginForm', () => {
     const submitButton = screen.getByRole('button', { name: /iniciar sesión/i })
 
     await user.type(usernameInput, 'testuser')
-    await user.type(passwordInput, '123456')
+    await user.type(passwordInput, 'PASSWORD!')
     await user.click(submitButton)
 
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledWith({
         username: 'testuser',
-        password: '123456',
+        password: 'PASSWORD!',
       })
     })
   })
@@ -172,7 +173,7 @@ describe('LoginForm', () => {
     const submitButton = screen.getByRole('button', { name: /iniciar sesión/i })
 
     await user.type(usernameInput, 'testuser')
-    await user.type(passwordInput, '123456')
+    await user.type(passwordInput, 'PASSWORD!')
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -205,7 +206,7 @@ describe('LoginForm', () => {
     const submitButton = screen.getByRole('button', { name: /iniciar sesión/i })
 
     await user.type(usernameInput, 'testuser')
-    await user.type(passwordInput, '123456')
+    await user.type(passwordInput, 'PASSWORD!')
     await user.click(submitButton)
 
     await waitFor(() => {
