@@ -17,6 +17,7 @@ import { Button } from "@/shared/components/ui/button";
 import { useLogin } from "../hooks/useAuth.js";
 import { setAuthToken, clearAuthData } from "../utils/authStorage.js";
 import { loginSchema } from "../validators/authValidators.js";
+import { PasswordRequirements } from "./PasswordRequirements.jsx";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -124,6 +125,7 @@ export function LoginForm() {
                     </button>
                   </div>
                 </FormControl>
+                <PasswordRequirements password={field.value} />
                 <FormMessage />
               </FormItem>
             )}

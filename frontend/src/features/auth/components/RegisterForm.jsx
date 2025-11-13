@@ -18,6 +18,7 @@ import { Button } from "@/shared/components/ui/button";
 import { useRegister } from "../hooks/useAuth.js";
 import { setAuthToken, clearAuthData } from "../utils/authStorage.js";
 import { registerSchema } from "../validators/authValidators.js";
+import { PasswordRequirements } from "./PasswordRequirements.jsx";
 
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -145,6 +146,7 @@ export function RegisterForm() {
                     </button>
                   </div>
                 </FormControl>
+                <PasswordRequirements password={field.value} />
                 <FormMessage />
               </FormItem>
             )}
