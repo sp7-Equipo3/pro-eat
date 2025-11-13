@@ -20,21 +20,12 @@ export const useApiMutation = (mutationFn, options = {}) => {
   return useMutation({
     mutationFn,
     onSuccess: (data, variables, context) => {
-      console.log('useApiMutation - onSuccess ejecutado:', {
-        data,
-        variables,
-        context
-      });
+ 
       if (onSuccess) {
         onSuccess(data, variables, context);
       }
     },
     onError: (error, variables, context) => {
-      console.error('useApiMutation - onError ejecutado:', {
-        error,
-        variables,
-        context
-      });
       if (onError) {
         onError(error, variables, context);
       }

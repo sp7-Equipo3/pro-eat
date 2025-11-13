@@ -24,8 +24,7 @@ export default function ProductsListPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [filters, setFilters] = useState({
-    sort: '',
-    selectedCategories: []
+    sort: ''
   });
 
   const {
@@ -53,12 +52,6 @@ export default function ProductsListPage() {
       );
     }
 
-    if (filters.selectedCategories.length > 0) {
-      filtered = filtered.filter(product =>
-        filters.selectedCategories.includes(product.category)
-      );
-    }
-
     if (filters.sort) {
       filtered.sort((a, b) => {
         switch (filters.sort) {
@@ -77,7 +70,7 @@ export default function ProductsListPage() {
     }
 
     return filtered;
-  }, [allProducts, searchQuery, filters.sort, filters.selectedCategories]);
+  }, [allProducts, searchQuery, filters.sort]);
 
   const totalElements = filteredProducts.length;
   const totalPages = Math.ceil(totalElements / size);
@@ -88,7 +81,7 @@ export default function ProductsListPage() {
 
   useEffect(() => {
     setPage(0);
-  }, [filters.sort, searchQuery, filters.selectedCategories]);
+  }, [filters.sort, searchQuery]);
 
   const handlePageChange = newPage => {
     setPage(newPage);
@@ -101,10 +94,6 @@ export default function ProductsListPage() {
 
   const handleSortChange = value => {
     setFilters(prev => ({ ...prev, sort: value }));
-  };
-
-  const handleCategoriesChange = categories => {
-    setFilters(prev => ({ ...prev, selectedCategories: categories }));
   };
 
   const deleteProductMutation = useApiMutation(
@@ -186,8 +175,6 @@ export default function ProductsListPage() {
         onSearchChange={handleSearchChange}
         sort={filters.sort}
         onSortChange={handleSortChange}
-        selectedCategories={filters.selectedCategories}
-        onCategoriesChange={handleCategoriesChange}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
@@ -222,26 +209,17 @@ export default function ProductsListPage() {
             <p className='text-center text-lg mt-10'>Cargando productos...</p>
           ) : totalElements === 0 ? (
             <p className='text-center mt-10'>
-              {searchQuery || filters.selectedCategories.length > 0
+              {searchQuery
                 ? 'No se encontraron productos que coincidan con los filtros seleccionados.'
                 : 'No hay productos disponibles.'}
             </p>
           ) : (
             <>
               <div className='mb-4 text-sm text-gray-600'>
-                {searchQuery ||
-                filters.selectedCategories.length > 0 ? (
+                {searchQuery ? (
                   <>
                     Mostrando {numberOfElements} de {totalElements} productos
                     {searchQuery && ` para "${searchQuery}"`}
-                    {filters.selectedCategories.length > 0 && (
-                      <>
-                        {' '}
-                        en categoría
-                        {filters.selectedCategories.length > 1 ? 's' : ''}:{' '}
-                        {filters.selectedCategories.join(', ')}
-                      </>
-                    )}
                   </>
                 ) : (
                   <>
