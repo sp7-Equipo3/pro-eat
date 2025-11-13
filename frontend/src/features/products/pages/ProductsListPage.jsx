@@ -24,64 +24,64 @@ export default function ProductsListPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [filters, setFilters] = useState({
-    searchQuery: '',
-    sort: '',
-    selectedCategories: []
+    sort: ''
   });
 
-  useEffect(() => {
-    setFilters(prev => ({ ...prev, searchQuery }));
-  }, [searchQuery]);
-
-  const queryParams = useMemo(() => {
-    const params = {
-      page,
-      size
-    };
-
-    if (filters.sort) {
-      params.sort = filters.sort;
-    }
-
-    if (filters.searchQuery?.trim()) {
-      params.name = filters.searchQuery.trim();
-    }
-
-    if (filters.selectedCategories.length > 0) {
-      params.category = filters.selectedCategories;
-    }
-
-    return params;
-  }, [
-    page,
-    size,
-    filters.sort,
-    filters.searchQuery,
-    filters.selectedCategories
-  ]);
-
   const {
-    data: paginatedResponse,
+    data: allProductsResponse,
     isLoading,
     error
   } = useQuery({
-    queryKey: ['products', queryParams],
-    queryFn: () => getProducts(queryParams),
+    queryKey: ['products', 'all'],
+    queryFn: () => getProducts({ page: 0, size: 1000 }),
     staleTime: 30 * 1000
   });
 
-  const products = useMemo(
-    () => paginatedResponse?.data?.content || [],
-    [paginatedResponse?.data?.content]
+  const allProducts = useMemo(
+    () => allProductsResponse?.data?.content || [],
+    [allProductsResponse?.data?.content]
   );
 
-  const totalPages = paginatedResponse?.data?.totalPages || 0;
-  const totalElements = paginatedResponse?.data?.totalElements || 0;
-  const numberOfElements = paginatedResponse?.data?.numberOfElements || 0;
+  const filteredProducts = useMemo(() => {
+    let filtered = [...allProducts];
+
+    if (searchQuery?.trim()) {
+      const query = searchQuery.trim().toLowerCase();
+      filtered = filtered.filter(product =>
+        product.name?.toLowerCase().includes(query)
+      );
+    }
+
+    if (filters.sort) {
+      filtered.sort((a, b) => {
+        switch (filters.sort) {
+          case 'name,asc':
+            return (a.name || '').localeCompare(b.name || '');
+          case 'name,desc':
+            return (b.name || '').localeCompare(a.name || '');
+          case 'price,asc':
+            return (a.price || 0) - (b.price || 0);
+          case 'price,desc':
+            return (b.price || 0) - (a.price || 0);
+          default:
+            return 0;
+        }
+      });
+    }
+
+    return filtered;
+  }, [allProducts, searchQuery, filters.sort]);
+
+  const totalElements = filteredProducts.length;
+  const totalPages = Math.ceil(totalElements / size);
+  const startIndex = page * size;
+  const endIndex = startIndex + size;
+  const products = filteredProducts.slice(startIndex, endIndex);
+  const numberOfElements = products.length;
 
   useEffect(() => {
     setPage(0);
-  }, [filters.sort, filters.searchQuery, filters.selectedCategories]);
+  }, [filters.sort, searchQuery]);
 
   const handlePageChange = newPage => {
     setPage(newPage);
@@ -94,10 +94,6 @@ export default function ProductsListPage() {
 
   const handleSortChange = value => {
     setFilters(prev => ({ ...prev, sort: value }));
-  };
-
-  const handleCategoriesChange = categories => {
-    setFilters(prev => ({ ...prev, selectedCategories: categories }));
   };
 
   const deleteProductMutation = useApiMutation(
@@ -179,8 +175,6 @@ export default function ProductsListPage() {
         onSearchChange={handleSearchChange}
         sort={filters.sort}
         onSortChange={handleSortChange}
-        selectedCategories={filters.selectedCategories}
-        onCategoriesChange={handleCategoriesChange}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
@@ -211,30 +205,21 @@ export default function ProductsListPage() {
             </div>
           </div>
 
-          {isLoading && !paginatedResponse ? (
+          {isLoading && !allProductsResponse ? (
             <p className='text-center text-lg mt-10'>Cargando productos...</p>
           ) : totalElements === 0 ? (
             <p className='text-center mt-10'>
-              {filters.searchQuery || filters.selectedCategories.length > 0
+              {searchQuery
                 ? 'No se encontraron productos que coincidan con los filtros seleccionados.'
                 : 'No hay productos disponibles.'}
             </p>
           ) : (
             <>
               <div className='mb-4 text-sm text-gray-600'>
-                {filters.searchQuery ||
-                filters.selectedCategories.length > 0 ? (
+                {searchQuery ? (
                   <>
                     Mostrando {numberOfElements} de {totalElements} productos
-                    {filters.searchQuery && ` para "${filters.searchQuery}"`}
-                    {filters.selectedCategories.length > 0 && (
-                      <>
-                        {' '}
-                        en categoría
-                        {filters.selectedCategories.length > 1 ? 's' : ''}:{' '}
-                        {filters.selectedCategories.join(', ')}
-                      </>
-                    )}
+                    {searchQuery && ` para "${searchQuery}"`}
                   </>
                 ) : (
                   <>

@@ -2,7 +2,6 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { SearchBar } from './filters/SearchBar';
 import { SortSelector } from './filters/SortSelector';
-import { CategoryFilter } from './filters/CategoryFilter';
 import {
   Sheet,
   SheetContent,
@@ -17,8 +16,6 @@ export function ProductsFiltersSidebar({
   onSearchChange,
   sort,
   onSortChange,
-  selectedCategories, // eslint-disable-line no-unused-vars
-  onCategoriesChange, // eslint-disable-line no-unused-vars
   isCollapsed,
   onToggleCollapse
 }) {
@@ -30,12 +27,6 @@ export function ProductsFiltersSidebar({
       </div>
 
       <SortSelector value={sort} onChange={onSortChange} />
-
-      {/* Filtro de categorías temporalmente oculto - Backend no implementado aún */}
-      {/* <CategoryFilter
-        selectedCategories={selectedCategories}
-        onChange={onCategoriesChange}
-      /> */}
     </div>
   );
 
