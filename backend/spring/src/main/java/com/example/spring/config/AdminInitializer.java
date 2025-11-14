@@ -8,6 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 @Configuration
 @RequiredArgsConstructor
 public class AdminInitializer implements CommandLineRunner {
@@ -17,17 +19,26 @@ public class AdminInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args){
-        if (userRepository.existsByUsername("admin")) {
+        Optional<User> aux = userRepository.findByUsername("admin");
+
+        // Caso 1: No existe usuario "admin" → crear
+        if (aux.isEmpty()) {
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword(passwordEncoder.encode("Admin123@"));
+            admin.setRole(Role.ADMIN);
+
+            userRepository.save(admin);
+            System.out.println("Initial admin created: username=admin, password=Admin123@");
             return;
         }
 
-        User admin = new User();
-        admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("Admin123@"));
-        admin.setRole(Role.ADMIN);
-
-        userRepository.save(admin);
-
-        System.out.println("Initial admin created: username=admin, password=Admin123@");
+        // Caso 2: Existe "admin" pero NO existe ningún ADMIN → corregir
+        User admin = aux.get();
+        if (!userRepository.existsByRole(Role.ADMIN)) {
+            admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
+            System.out.println("Existing 'admin' user role updated to ADMIN.");
+        }
     }
 }
