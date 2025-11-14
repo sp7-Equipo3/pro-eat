@@ -20,7 +20,7 @@ export const handleApiError = (error) => {
   } else if (status === 401) {
     message = 'No autorizado. Por favor inicia sesión.'
   } else if (status === 403) {
-    message = 'No tienes permiso para realizar esta acción'
+    message = data?.message || 'No tienes permiso para realizar esta acción'
   } else if (status === 404) {
     message = 'Recurso no encontrado'
   } else if (status === 500) {

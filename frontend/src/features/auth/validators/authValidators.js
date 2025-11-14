@@ -15,9 +15,9 @@ export const loginSchema = z.object({
     .min(8, 'La contraseña debe tener entre 8 y 64 caracteres')
     .max(64, 'La contraseña debe tener entre 8 y 64 caracteres')
     .regex(
-      /^(?=.*[A-Z])(?=.*[@$!%*?&]).{8,64}$/,
-      'La contraseña debe contener al menos una letra mayúscula y un carácter especial'
-    ),
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,64}$/,
+      'La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial'
+    )
 });
 
 export const registerSchema = z.object({
@@ -36,8 +36,7 @@ export const registerSchema = z.object({
     .min(8, 'La contraseña debe tener entre 8 y 64 caracteres')
     .max(64, 'La contraseña debe tener entre 8 y 64 caracteres')
     .regex(
-      /^(?=.*[A-Z])(?=.*[@$!%*?&]).{8,64}$/,
-      'La contraseña debe contener al menos una letra mayúscula y un carácter especial'
-    ),
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,64}$/,
+      'La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial'
+    )
 });
-

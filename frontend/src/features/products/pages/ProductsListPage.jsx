@@ -107,9 +107,15 @@ export default function ProductsListPage() {
         toast.success('Producto eliminado exitosamente');
       },
       onError: error => {
-        toast.error('Error al eliminar producto', {
-          description: error.message || 'Por favor, intenta de nuevo.'
-        });
+        if (error?.status === 403) {
+          toast.error('Acceso denegado', {
+            description: error?.data?.message || 'Este usuario no tiene permisos para eliminar productos. Solo los administradores pueden realizar esta acción.'
+          });
+        } else {
+          toast.error('Error al eliminar producto', {
+            description: error?.message || 'Por favor, intenta de nuevo.'
+          });
+        }
       }
     }
   );

@@ -12,6 +12,11 @@ const PASSWORD_REQUIREMENTS = [
     test: (password) => /[A-Z]/.test(password),
   },
   {
+    id: "number",
+    label: "Al menos un número",
+    test: (password) => /\d/.test(password),
+  },
+  {
     id: "special",
     label: "Al menos un carácter especial (@$!%*?&)",
     test: (password) => /[@$!%*?&]/.test(password),

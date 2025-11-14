@@ -69,9 +69,15 @@ export function CreateProductForm({ onClose, product, open }) {
       onClose?.();
     },
     onError: error => {
-      toast.error('Error al crear producto', {
-        description: error.message || 'Por favor, intenta de nuevo.'
-      });
+      if (error?.status === 403) {
+        toast.error('Acceso denegado', {
+          description: error?.data?.message || 'Este usuario no tiene permisos para crear productos. Solo los administradores pueden realizar esta acción.'
+        });
+      } else {
+        toast.error('Error al crear producto', {
+          description: error?.message || 'Por favor, intenta de nuevo.'
+        });
+      }
     }
   });
 
@@ -88,9 +94,15 @@ export function CreateProductForm({ onClose, product, open }) {
         onClose?.();
       },
       onError: error => {
-        toast.error('Error al actualizar producto', {
-          description: error.message || 'Por favor, intenta de nuevo.'
-        });
+        if (error?.status === 403) {
+          toast.error('Acceso denegado', {
+            description: error?.data?.message || 'Este usuario no tiene permisos para editar productos. Solo los administradores pueden realizar esta acción.'
+          });
+        } else {
+          toast.error('Error al actualizar producto', {
+            description: error?.message || 'Por favor, intenta de nuevo.'
+          });
+        }
       }
     }
   );
